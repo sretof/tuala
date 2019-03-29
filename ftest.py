@@ -19,15 +19,83 @@ print('hello\nworld')
 # TF
 print(3 > 2)
 
-# if-else
-age = 18
-if age > 2:
-    print(1)
-else:
-    print(2)
-
 # str byte len
 print('ABC'.encode('ascii'))
 print('中文'.encode('utf-8'))
 print(len('中文'))
 print(len('中文'.encode('utf-8')))
+
+# tpule list
+classmates = ('Michael', 'Bob', 'Tracy')
+t = (1, 2)
+t1 = (1)
+t2 = (1,)
+print(classmates)
+print(t)
+print(t1)
+print(t2)
+
+# not support item assignment
+# 1[0] = 3
+# print(t)
+
+l = ['Apple', 123, True]
+print(l)
+
+l[0] = 'Dog'
+print(l)
+
+# if-else
+age = 18
+if age > 20:
+    print(1)
+elif age > 14:
+    print(2)
+else:
+    print(3)
+
+if age:
+    print('True')
+else:
+    print('False')
+age = 0
+if age:
+    print('True')
+else:
+    print('False')
+age = []
+if age:
+    print('True')
+else:
+    print('False')
+age = ''
+if age:
+    print('True')
+else:
+    print('False')
+
+# for
+sum = 0
+for x in [1, 2, 3]:
+    sum = sum + x
+print(sum)
+
+# range
+# print(range(5))  #range(0, 5)
+print(list(range(5)))
+
+sum = 0
+for x in range(101):
+    sum = sum + x
+print(sum)
+
+# dict set
+d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
+print(d['Michael'])
+# print(d[1])
+print(d.get('Bob', -1))
+print(d.get('Bobb', -1))
+
+s = set([1, 1, 2, 2, 3, 3])
+s.add(2)
+print(s)
