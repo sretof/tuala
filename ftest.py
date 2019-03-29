@@ -99,3 +99,21 @@ print(d.get('Bobb', -1))
 s = set([1, 1, 2, 2, 3, 3])
 s.add(2)
 print(s)
+
+
+# fun
+def swap(a, b):
+    c = b
+    b = a
+    a = c
+    return a, b
+
+
+def nop():
+    pass
+
+
+# return a tuple
+print(swap(1, 4))
+a, b = swap(1, 4)
+print(a, b)
