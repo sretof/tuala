@@ -109,6 +109,15 @@ def swap(a, b):
     return a, b
 
 
+# def param
+def mypower(x, n=2):
+    s = 1
+    while n > 0:
+        n = n - 1
+        s = s * x
+    return s
+
+
 def nop():
     pass
 
@@ -117,3 +126,6 @@ def nop():
 print(swap(1, 4))
 a, b = swap(1, 4)
 print(a, b)
+
+print(mypower(3))
+print(mypower(3, 3))
