@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+__author__ = 'Erik YU'
 
+import sys
+
+##PART1 BASE
 # print
 print('hello world')
 print(2 ** 3)
@@ -83,6 +87,7 @@ print(sum)
 # range
 # print(range(5))  #range(0, 5)
 print(list(range(5)))
+print(list(range(2, 5)))
 
 sum = 0
 for x in range(101):
@@ -101,6 +106,7 @@ s.add(2)
 print(s)
 
 
+##PART2 FUNC
 # fun
 def swap(a, b):
     c = b
@@ -118,6 +124,15 @@ def mypower(x, n=2):
     return s
 
 
+# recursive func
+def fact(n):
+    if n == 1:
+        return 1
+    else:
+        return n * fact(n - 1)
+
+
+# pass
 def nop():
     pass
 
@@ -129,3 +144,43 @@ print(a, b)
 
 print(mypower(3))
 print(mypower(3, 3))
+
+print(fact(3))
+
+
+##PART3 slice ; for...in ; list...range ; generator ; Iterable
+
+##PART4 lambda calculus
+
+##PART5 import/scope/pip
+# import sys
+def testimp():
+    args = sys.argv
+    if len(args) == 1:
+        print('Hello, world!')
+    elif len(args) == 2:
+        print('Hello, %s!' % args[1])
+    else:
+        print('Too many arguments!')
+
+
+if __name__ == '__main__':
+    testimp()
+# scope
+def _private_1(name):
+    return 'Hello, %s' % name
+
+def _private_2(name):
+    return 'Hi, %s' % name
+
+def greeting(name):
+    if len(name) > 3:
+        return _private_1(name)
+    else:
+        return _private_2(name)
+
+##PART6 mysql
+
+##PART7 web
+
+##PART8 IO/ASYNCIO
