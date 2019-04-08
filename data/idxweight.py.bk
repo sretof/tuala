@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Erik YU'
 
+import calendar
+import datetime
 import time
 
 import pymysql
@@ -24,29 +26,50 @@ import tushare as ts
 # # 关闭数据库连接
 # db.close()
 
-__period = ('daily', 'weekly', 'monthly')
+__sdate = '20040101'
 __force = False
 
 conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
 cursor = conn.cursor()
 
+cursor.execute("select max(t.trade_date) from idx_weight t;")
+data = cursor.fetchone()
+conn.close()
+
+# conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
+# cursor = conn.cursor(pymysql.cursors.DictCursor)
+# cursor.execute("select t.ts_code from idx_basic t order by t.ts_code;")
+# idxcs = cursor.fetchall()
+# conn.close()
+
+tedate = datetime.date.today()
+tsdate = datetime.date(int(__sdate[0:4]), int(__sdate[4:6]), 1)
+
+if data[0] and len(data[0]) == 8 and int(data[0]) > int(__sdate) and not __force:
+    edate = datetime.date(int(data[0][0:4]), int(data[0][4:6]), 1)
+    if(edate.year == tedate.year and edate.month == tedate.month ):
+        tsdate = tedate
+    else:
+        days_num = calendar.monthrange(edate.year, edate.month)[1]
+        edate = edate + datetime.timedelta(days_num)
+        tsdate = edate
+
 api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
 cursor = conn.cursor()
 isql = ''
-i = 0
-mlen = len(__markets)
-while i < mlen:
-    m = __markets[i]
+while tedate > tsdate:
     try:
-        df = api.index_basic(market=m)
+        df = api.index_weight(trade_date=tedate.strftime('%Y%m%d'))
     except BaseException as e:
         print(e)
-        time.sleep(1)
         continue
+    finally:
+        time.sleep(0.6)
+    print(tedate, ' ', len(df.values))
     cols = df.columns
-    if not isql and len(cols) > 0:
-        isql = "insert into idx_basic("
+    if not isql:
+        isql = "insert into idx_dweight("
         isqlv = ""
         for col in cols:
             isql = isql + col + ","
@@ -55,18 +78,20 @@ while i < mlen:
         isqlv = isqlv[:len(isqlv) - 1]
         isql = isql + " ) values(" + isqlv + " )"
         print(isql)
-    i = i + 1
     if len(df.values) == 0:
+        tedate = tedate - datetime.timedelta(days=1)
         continue
-    print(len(df.values))
+    else
+
     for index, row in df.iterrows():
         rowv = []
         for col in cols:
             rowv.append(row[col])
         try:
+            print(rowv)
             cursor.execute(isql, rowv)
             conn.commit()
         except BaseException as e:
-            print(row['ts_code'], ':', e)
+            print(row['index_code'], ':', e)
 cursor.close()
 conn.close()

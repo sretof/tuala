@@ -1,5 +1,5 @@
-﻿DROP TABLE IF EXISTS `index_weight`;
-CREATE TABLE `index_weight` (
+﻿DROP TABLE IF EXISTS `idx_weight`;
+CREATE TABLE `idx_weight` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
   `index_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '指数代码',

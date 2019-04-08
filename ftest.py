@@ -184,3 +184,26 @@ def greeting(name):
 ##PART7 web
 
 ##PART8 IO/ASYNCIO
+
+##PART9 time datetime calendar
+# tsdate = '20040106'
+# tmedate = datetime.date(tsdate.year, tsdate.month, 1)
+# tmedate = tmedate + datetime.timedelta(days=80)
+# tmedate = datetime.date(tmedate.year, tmedate.month, 1)
+# days_num = calendar.monthrange(tmedate.year, tmedate.month)[1]
+#
+# qedate = datetime.date(tsdate.year, tsdate.month, 1)
+# tmedate = qedate + datetime.timedelta(days=80)
+# tmedate = datetime.date(tmedate.year, tmedate.month, 1)
+# days_num = calendar.monthrange(tmedate.year, tmedate.month)[1]
+# qsdate = tmedate + datetime.timedelta(days_num - 1)
+# if qedate < tsdate :
+#     qedate = tsdate
+# if qsdate > tedate :
+#     qsdate = tedate
+# print(qedate, ' ', qsdate)
+#
+# while qedate < tedate
+# isql = ''
+# while tsdate < tedate:
+#

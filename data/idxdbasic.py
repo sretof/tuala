@@ -27,7 +27,6 @@ import tushare as ts
 
 __sdate = '20040101'
 __force = False
-__maxt = 100
 
 conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
 cursor = conn.cursor()
@@ -77,7 +76,6 @@ while tsdate < tedate:
             cursor.execute(isql, rowv)
             conn.commit()
         except BaseException as e:
-            print(tsdate, row['ts_code'])
-            print(e)
+            print(row['ts_code'], ':', e)
 cursor.close()
 conn.close()
