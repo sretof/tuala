@@ -10,7 +10,7 @@ import util.caldate as caldate
 import util.tuhelper as tuh
 
 __force = True
-__fav = 1
+__fav = 2
 __batch = True
 
 conn = tuh.getMysqlConn()
@@ -22,9 +22,9 @@ else:
 idxcs = cursor.fetchall()
 cursor.close()
 
-cursor = conn.cursor()
-cursor.execute("select t.index_code,max(t.trade_date) from idx_weight t group by t.index_code;")
-imdates = cursor.fetchall()
+cursor = conn.cursor(pymysql.cursors.DictCursor)
+cursor.execute("select t.index_code as idc,max(t.trade_date) as itd from idx_weight t group by t.index_code;")
+idd = tuh.listToDict(cursor.fetchall(),'idc','itd')
 cursor.close()
 
 tuApi = tuh.tuApi

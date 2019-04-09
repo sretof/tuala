@@ -36,7 +36,12 @@ def cutTuData(df, cutIdx):
         df = df.drop(df[df[cutIdx] == m].index)
     return df
 
-def listToDict(datas,keyn,valn):
+
+def listToDict(datas, keyn, valn):
+    dict = {}
+    for data in datas:
+        dict[data[keyn]] = data[valn]
+    return dict
 
 
 def test():
