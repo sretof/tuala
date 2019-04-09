@@ -28,19 +28,13 @@ import tushare as ts
 
 __sdate = '20190108'
 __force = True
-
-conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
-cursor = conn.cursor()
-
-cursor.execute("select max(t.trade_date) from idx_weight t;")
-data = cursor.fetchone()
-conn.close()
+__fav = 1
 
 conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
 cursor = conn.cursor(pymysql.cursors.DictCursor)
-cursor.execute("select t.ts_code from idx_basic t where t.id<2 order by t.ts_code;")
+cursor.execute("select t.ts_code from idx_basic t where t.fav="+__fav+" order by t.ts_code;")
 idxcs = cursor.fetchall()
-conn.close()
+
 
 if data[0] and len(data[0]) == 8 and int(data[0]) > int(__sdate) and not __force:
     __sdate = data[0]
@@ -52,9 +46,20 @@ tedate = datetime.date(tedate.year, tedate.month, 1) - datetime.timedelta(days=1
 tedate = datetime.date(tedate.year, tedate.month, 1)
 
 api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
-conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
-cursor = conn.cursor()
 isql = ''
+
+for idxd in idxcs:
+    idxcode=idxd['ts_code']
+    cursor.execute("select max(t.trade_date) from idx_weight t where t.index_code='"+idxcode+"';")
+    data = cursor.fetchone()
+    sdate = __sdate
+    if data[0] and len(data[0]) == 8 and int(data[0]) > int(sdate) and not __force:
+        sdate = data[0]
+    tsdate = datetime.date(int(sdate[0:4]), int(sdate[4:6]), 1)
+    tedate = datetime.date.today()
+    tedate = datetime.date(tedate.year, tedate.month, 1) - datetime.timedelta(days=1)
+
+
 while tedate >= tsdate:
     fdate = tedate
     days_num = calendar.monthrange(tedate.year, tedate.month)[1]
@@ -65,7 +70,7 @@ while tedate >= tsdate:
         try:
             df = api.index_weight(index_code=idxc['ts_code'],start_date=fdate.strftime('%Y%m%d'), end_date=fedate.strftime('%Y%m%d'))
             print(fdate, ' ', fedate, ' ', idxc['ts_code'], ' ', len(df.values))
-            print(df)
+            # print(df)
             idxi+=1
         except BaseException as e:
             print(e)
