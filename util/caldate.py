@@ -6,7 +6,16 @@ import calendar
 import datetime
 
 
-def calMonthS(date, x=0):
+def ymd2date(ymd, se='N'):
+    date = datetime.date(int(ymd[0:4]), int(ymd[4:6]), int(ymd[6:8]))
+    if se == 'S':
+        date = calmonths(date)
+    elif se == 'E':
+        date = calmonthe(date)
+    return date
+
+
+def calmonths(date=datetime.date.today(), x=0):
     if x <= 0:
         return datetime.date(date.year, date.month, 1)
     while x >= 1:
@@ -17,17 +26,27 @@ def calMonthS(date, x=0):
     return date
 
 
-def calMonthE(date, x=0):
-    date = calMonthS(date, x)
+def calmonthe(date=datetime.date.today(), x=0):
+    date = calmonths(date, x)
     days_num = calendar.monthrange(date.year, date.month)[1]
     date = date + datetime.timedelta(days_num - 1)
     return date
 
 
+def today():
+    return datetime.date.today()
+
+
+def preday(date=datetime.date.today(), n=-1):
+    return date + datetime.timedelta(n)
+
+
 def test():
+    print('1===>', calmonths(), calmonthe())
     tdate = datetime.date.today()
     for i in range(0, 25):
-        print(i, ' ', calMonthS(tdate, i), ' ', calMonthE(tdate, i))
+        print(i, ' ', calmonths(tdate, i), ' ', calmonthe(tdate, i))
+
 
 if __name__ == '__main__':
     test()
