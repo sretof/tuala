@@ -1,5 +1,5 @@
-﻿DROP TABLE IF EXISTS `stk_basic`;
-CREATE TABLE `stk_basic` (
+﻿DROP TABLE IF EXISTS `stk_company`;
+CREATE TABLE `stk_company` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
   `symbol` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '代码',

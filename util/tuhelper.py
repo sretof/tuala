@@ -9,7 +9,7 @@ tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
 tuApi = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 tuMaxLen = 5000
 
-tuSdate = '20040101'
+tuSdate = '19901219'
 
 tuSqlMaxL = 2000
 
@@ -44,9 +44,22 @@ def genInsSql(cols, tab, isql=''):
     return isql
 
 
-def cutTuData(df, cutidx):
-    while len(df) > 0 and len(df) > tuMaxLen:
-        df = df[df[cutidx] > df[cutidx].min()]
+def cutTuData(df, cutidx, maxLen=tuMaxLen):
+    # print('maxL======>', maxLen)
+    # while len(df) > 0 and len(df) >= maxLen and len(df.groupby([cutidx])) > 1:
+    #     print('=====>', df[cutidx].min())
+    #     df = df[df[cutidx] > df[cutidx].min()]
+    # return df
+    gc = df.groupby([cutidx]).size().sort_index(ascending=False)
+    tcnt = 0
+    tcidx = ''
+    for gci in gc.index:
+        tcnt += gc[gci]
+        if tcnt >= maxLen:
+            tcidx = gci
+            break
+    if tcidx:
+        df = df[df[cutidx] >= tcidx]
     return df
 
 

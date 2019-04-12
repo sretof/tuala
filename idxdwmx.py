@@ -33,7 +33,6 @@ def fetchData(ind):
     cursor.execute("select t.ts_code as idc,max(t.trade_date) as itd from idx_" + ind + " t group by t.ts_code;")
     idxsdd = tuh.listToDict(cursor.fetchall(), 'idc', 'itd')
     cursor.close()
-
     tuapi = tuh.tuApi
     isql = ''
 
