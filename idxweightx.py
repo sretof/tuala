@@ -11,7 +11,7 @@ import util.caldate as cd
 import util.tuhelper as tuh
 import util.tulog as tul
 
-__force = True
+__force = False
 __fav = 2
 __batch = True
 
@@ -24,7 +24,8 @@ def fetchData():
         cursor.execute(
             "select t.ts_code from idx_basic t where t.del<>1 and t.fav=" + str(__fav) + " order by t.ts_code;")
     else:
-        cursor.execute("select t.ts_code from idx_basic t where t.del<>1 order by t.ts_code;")
+        cursor.execute(
+            "select t.ts_code from idx_basic t where t.del<>1 and (t.ts_code>'h11044.CSI') order by t.ts_code;")
     idxcs = cursor.fetchall()
     cursor.close()
 
@@ -37,6 +38,7 @@ def fetchData():
     isql = ''
 
     cursor = conn.cursor()
+    print('=============>S')
     for idxd in idxcs:
         idxc = idxd['ts_code']
         sdate = cd.ymd2date(getIdxSdate(idxsdd, idxc, __force))
@@ -58,20 +60,26 @@ def fetchData():
                         logger.error(m)
                     print(idxc, '===>sd:', sdate, ' ed:', edate, ' ldf:', len(df), ' mtd:', df['trade_date'].min(),
                           ' emc:', len(emsgs))
+                else:
+                    print(idxc, '===>sd:', sdate, ' ed:', edate, ' ldf:', len(df))
             except BaseException as e:
                 print(e)
-                time.sleep(1)
+                time.sleep(60)
                 continue
             if pd.isnull(df['trade_date'].min()):
                 edate = sdate
             else:
-                edate = cd.preday(cd.ymd2date(df['trade_date'].min()), -1)
+                edate = cd.preday(cd.ymd2date(df['trade_date'].min()))
     cursor.close()
     conn.close()
 
 
 def getIdxSdate(idxsdd, idxc, force=False):
     sdate = idxsdd.get(idxc, tuh.tuSdate)
+    if sdate > tuh.tuSdate:
+        dsdate = cd.ymd2date(sdate)
+        dsdate = cd.preday(dsdate, -1)
+        sdate = dsdate.strftime('%Y%m%d')
     if force or sdate < tuh.tuSdate:
         sdate = tuh.tuSdate
     return sdate

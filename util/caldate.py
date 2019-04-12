@@ -37,8 +37,8 @@ def today():
     return datetime.date.today()
 
 
-def preday(date=datetime.date.today(), n=-1):
-    return date + datetime.timedelta(n)
+def preday(date=datetime.date.today(), n=1):
+    return date + datetime.timedelta(n * -1)
 
 
 def test():

@@ -5,8 +5,6 @@ __author__ = 'Erik YU'
 import pymysql
 import tushare as ts
 
-import util.tulog as tlog
-
 tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
 tuApi = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 tuMaxLen = 5000
@@ -14,6 +12,8 @@ tuMaxLen = 5000
 tuSdate = '20040101'
 
 tuSqlMaxL = 2000
+
+mySqlKey = ['open', 'close', 'change']
 
 
 def getMysqlConn():
@@ -34,6 +34,8 @@ def genInsSql(cols, tab, isql=''):
         isql = "insert into " + tab + "("
         isqlv = ""
         for col in cols:
+            if col in mySqlKey:
+                col = '`' + col + '`'
             isql = isql + col + ","
             isqlv = isqlv + "%s" + ","
         isql = isql[:len(isql) - 1]
@@ -42,9 +44,9 @@ def genInsSql(cols, tab, isql=''):
     return isql
 
 
-def cutTuData(df, cutIdx):
-    while len(df) > 0 and len(df) >= tuMaxLen:
-        df = df[df[cutIdx] > df[cutIdx].min()]
+def cutTuData(df, cutidx):
+    while len(df) > 0 and len(df) > tuMaxLen:
+        df = df[df[cutidx] > df[cutidx].min()]
     return df
 
 
@@ -145,20 +147,29 @@ def main():
     # b = 40
     # print('d1-2==>', d1)
 
-    isql = genInsSql(('trade_date', 'index_code', 'con_code', 'weight'), 'idx_weight')
+    # isql = genInsSql(('trade_date', 'index_code', 'con_code', 'weight'), 'idx_weight')
+    #
+    # vals1 = [('20190102', '003', '1', '0'), ('20190102', '001', '1', '0'), ('20190202', '001', '1', '0'),
+    #          ('20190202', '002', '1', '0'), ('20190202', '003', '1', '0'), ('20190803', '001', '1', '0'),
+    #          ('20190104', '001', '1', '0'), ('20190704', '001', '1', '0'), ('20190304', '001', '1', '0'),
+    #          ('20190605', '001', '1', '0'), ('20190604', '001', '1', '0'), ('20190304', '001', '1', '0'),
+    #          ('20190507', '001', '1', '0'), ('20190508', '001', '1', '0'), ('20190509', '001', '1', '0')]
+    #
+    # # print(vals1[2:])
+    #
+    # emsgs = insertDatas({'sql': isql, 'vals': vals1})
+    # logger = tlog.TuLog('thhtest').getlog()
+    # for emsg in emsgs:
+    #     logger.error(emsg)
+    strt = 'open'
+    if strt in mySqlKey:
+        strt = '`' + strt + '`'
+    print(strt)
 
-    vals1 = [('20190102', '003', '1', '0'), ('20190102', '001', '1', '0'), ('20190202', '001', '1', '0'),
-             ('20190202', '002', '1', '0'), ('20190202', '003', '1', '0'), ('20190803', '001', '1', '0'),
-             ('20190104', '001', '1', '0'), ('20190704', '001', '1', '0'), ('20190304', '001', '1', '0'),
-             ('20190605', '001', '1', '0'), ('20190604', '001', '1', '0'), ('20190304', '001', '1', '0'),
-             ('20190507', '001', '1', '0'), ('20190508', '001', '1', '0'), ('20190509', '001', '1', '0')]
-
-    # print(vals1[2:])
-
-    emsgs = insertDatas({'sql': isql, 'vals': vals1})
-    logger = tlog.TuLog('thhtest').getlog()
-    for emsg in emsgs:
-        logger.error(emsg)
+    stra = 'opena'
+    if stra in mySqlKey:
+        stra = '`' + stra + '`'
+    print(stra)
 
 
 if __name__ == '__main__':

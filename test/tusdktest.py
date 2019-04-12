@@ -47,7 +47,7 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 # c2=df.groupby(['ts_code','trade_date'])['ts_code'].count()
 # print(c2)
 
-df = api.index_weight(index_code='000001.SH', start_date='20180901', end_date='20181230')
+df = api.index_weight(index_code='h11044.CSI')
 print(len(df))
 
 
