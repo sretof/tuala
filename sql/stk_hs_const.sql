@@ -1,17 +1,11 @@
-﻿DROP TABLE IF EXISTS `idx_monthly`;
-CREATE TABLE `idx_monthly` (
+﻿DROP TABLE IF EXISTS `stk_hs_const`;
+CREATE TABLE `stk_hs_const` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
-  `close` float DEFAULT NULL COMMENT '收盘点位',
-  `open` float DEFAULT NULL COMMENT '开盘点位',
-  `high` float DEFAULT NULL COMMENT '最高点位',
-  `low` float DEFAULT NULL COMMENT '最低点位',
-  `pre_close` float DEFAULT NULL COMMENT '昨日收盘点',
-  `change` float DEFAULT NULL COMMENT '涨跌点',
-  `pct_chg` float DEFAULT NULL COMMENT '涨跌幅（%）',
-  `vol` float DEFAULT NULL COMMENT '成交量（手）',
-  `amount` float DEFAULT NULL COMMENT '成交额（千元）',
+  `hs_type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '沪深港通类型SH沪SZ深',
+  `in_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '纳入日期',
+  `out_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '剔除日期',
+  `new`  tinyint(3) DEFAULT NULL COMMENT '是否最新 1是 0否',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idm_tctd` (`ts_code`,`trade_date`) USING BTREE
+  UNIQUE KEY `stk_hsc_ts_code` (`ts_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

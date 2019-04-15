@@ -2,10 +2,6 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Erik YU'
 
-import datetime
-import time
-
-import pymysql
 import tushare as ts
 
 api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
@@ -47,11 +43,51 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 # c2=df.groupby(['ts_code','trade_date'])['ts_code'].count()
 # print(c2)
 
-df = api.index_weight(index_code='h11044.CSI')
+# df = api.index_weight(index_code='h11044.CSI')
+# print(len(df))
+
+# df = api.daily(ts_code='000001.SZ', start_date='20180701', end_date='20180718')
+# print(df)
+
+# df = api.stock_basic()
+# #print(df)
+#
+# cols = df.columns
+# rowv = []
+# for col in cols:
+#     rowv.append(col)
+# print(rowv)
+# for index, row in df.iterrows():
+#     rowv = []
+#     for col in cols:
+#         rowv.append(row[col])
+#     print(rowv)
+
+
+# df = api.stock_basic(list_status='D',fields='ts_code,symbol,name,area,industry,fullname,enname,market,exchange,list_status,delist_date,list_date,is_hs')
+# print('len====>',len(df))
+# print(df)
+# c = df.groupby(['list_status']).size()
+# for idx in c.index:
+#     print('===>C:', idx, ' ', c[idx])
+# cols = df.columns
+# rowv = []
+# for col in cols:
+#     rowv.append(col)
+# print(rowv)
+
+df = api.daily(ts_code='000001.SZ', start_date='19901219', end_date='20190414')
+print(df['trade_date'].min())
 print(len(df))
 
+df2 = api.daily(ts_code='000001.SZ', start_date='19901219', end_date='20020303')
+print(df2['trade_date'].min())
+print(len(df2))
 
-
+df3 = ts.pro_bar(api=api, ts_code='000001.SZ', start_date='20180101', end_date='20181011', factors=['tor', 'vr'])
+print(df3)
+for col in df3.columns:
+    print(col)
 
 # __fav = '1'
 # conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")

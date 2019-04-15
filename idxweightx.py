@@ -25,7 +25,7 @@ def fetchData():
             "select t.ts_code from idx_basic t where t.del<>1 and t.fav=" + str(__fav) + " order by t.ts_code;")
     else:
         cursor.execute(
-            "select t.ts_code from idx_basic t where t.del<>1 and (t.ts_code>'n31016.CSI') order by t.ts_code;")
+            "select t.ts_code from idx_basic t where t.del<>1 order by t.ts_code;")
     idxcs = cursor.fetchall()
     cursor.close()
 

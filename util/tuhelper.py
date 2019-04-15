@@ -9,11 +9,13 @@ tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
 tuApi = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 tuMaxLen = 5000
 
+tumaxexcnt = 4
+
 tuSdate = '19901219'
 
 tuSqlMaxL = 2000
 
-mySqlKey = ['open', 'close', 'change']
+mySqlKey = ['open', 'close', 'change', 'new']
 
 
 def getMysqlConn():
@@ -29,11 +31,13 @@ def closeMysqlConn(conn):
 
 
 # 传入clo和tab,生成sql
-def genInsSql(cols, tab, isql=''):
+def geninssql(cols, tab, isql=''):
     if not isql and len(cols) > 0:
         isql = "insert into " + tab + "("
         isqlv = ""
         for col in cols:
+            if len(col) > 3 and col.find('is_', 0, 3) == 0:
+                col = col[3:]
             if col in mySqlKey:
                 col = '`' + col + '`'
             isql = isql + col + ","
@@ -42,6 +46,23 @@ def genInsSql(cols, tab, isql=''):
         isqlv = isqlv[:len(isqlv) - 1]
         isql = isql + ") values(" + isqlv + ")"
     return isql
+
+
+# 传入clo/tab/wherec,生成update sql
+def genupdsql(cols, tab, wherec, usql=''):
+    if not usql and len(cols) > 0:
+        usql = "update " + tab + " set"
+        for col in cols:
+            if len(col) > 3 and col.find('is_', 0, 3) == 0:
+                col = col[3:]
+            if col in mySqlKey:
+                col = '`' + col + '`'
+            usql = usql + " " + col + "=%s,"
+        usql = usql[:len(usql) - 1]
+        usql = usql + " where 1=1"
+        for wc in wherec:
+            usql = usql + " and " + wc + "=%s"
+    return usql
 
 
 def cutTuData(df, cutidx, maxLen=tuMaxLen):
@@ -66,12 +87,15 @@ def cutTuData(df, cutidx, maxLen=tuMaxLen):
 def listToDict(datas, keyn, valn):
     dict = {}
     for data in datas:
-        dict[data[keyn]] = data[valn]
+        if valn == '_all_':
+            dict[data[keyn]] = data
+        else:
+            dict[data[keyn]] = data[valn]
     return dict
 
 
 # to class
-def insertData(conn, cursor, sql, val):
+def saveorupdateone(conn, cursor, sql, val):
     emsg = {}
     try:
         cursor.execute(sql, val)
@@ -83,19 +107,19 @@ def insertData(conn, cursor, sql, val):
     return emsg
 
 
-def insertDatas(datas, batch=1):
+def saveorupdate(datas, batch=True):
     emsgs = []
     conn = getMysqlConn()
     cursor = conn.cursor()
-    if batch == 0:
+    if not batch:
         if not datas['sql']:
             for data in datas:
-                emsg = insertData(conn, cursor, data['sql'], data['val'])
+                emsg = saveorupdateone(conn, cursor, data['sql'], data['val'])
                 if emsg:
                     emsgs.append(emsg)
         else:
             for val in datas['vals']:
-                emsg = insertData(conn, cursor, datas['sql'], val)
+                emsg = saveorupdateone(conn, cursor, datas['sql'], val)
                 if emsg:
                     emsgs.append(emsg)
         cursor.close()
@@ -124,7 +148,7 @@ def insertDatas(datas, batch=1):
             sidx = eidx
             eidx = min(eidx + tuSqlMaxL, vlen)
     for eidxd in eidxds:
-        pemsgs = insertDatas({'sql': datas['sql'], 'vals': vals[eidxd['s']:eidxd['e']]}, batch=0)
+        pemsgs = saveorupdate({'sql': datas['sql'], 'vals': vals[eidxd['s']:eidxd['e']]}, batch=False)
         if pemsgs:
             emsgs.extend(pemsgs)
     cursor.close()
@@ -174,15 +198,18 @@ def main():
     # logger = tlog.TuLog('thhtest').getlog()
     # for emsg in emsgs:
     #     logger.error(emsg)
-    strt = 'open'
-    if strt in mySqlKey:
-        strt = '`' + strt + '`'
-    print(strt)
-
-    stra = 'opena'
-    if stra in mySqlKey:
-        stra = '`' + stra + '`'
-    print(stra)
+    # strt = 'open'
+    # if strt in mySqlKey:
+    #     strt = '`' + strt + '`'
+    # print(strt)
+    #
+    # stra = 'opena'
+    # if stra in mySqlKey:
+    #     stra = '`' + stra + '`'
+    # print(stra)
+    cols = ('Michael', 'Bob', 'Tracy')
+    wcs = ('c1', 'c2')
+    print("=====>", genupdsql(cols, 'idx_w', wcs))
 
 
 if __name__ == '__main__':

@@ -84,7 +84,7 @@ def getIdxSdate(idxsdd, idxc, force=False):
 
 
 def fetchTuData(api, ind, sdate, edate, idxc):
-    if ind == 'm' or ind == 'monly':
+    if ind == 'm' or ind == 'monthly':
         fdf = api.index_monthly(ts_code=idxc, start_date=sdate, end_date=edate)
     elif ind == 'w' or ind == 'weekly':
         fdf = api.index_weekly(ts_code=idxc, start_date=sdate, end_date=edate)

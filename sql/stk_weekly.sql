@@ -1,5 +1,5 @@
-﻿DROP TABLE IF EXISTS `stk_monthly`;
-CREATE TABLE `stk_monthly` (
+﻿DROP TABLE IF EXISTS `stk_weekly`;
+CREATE TABLE `stk_weekly` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
   `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
@@ -22,5 +22,5 @@ CREATE TABLE `stk_monthly` (
   `ori_change` float DEFAULT NULL COMMENT '涨跌点',
   `ori_pct_chg` float DEFAULT NULL COMMENT '涨跌幅（%）',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `stk_m_tctd` (`ts_code`,`trade_date`) USING BTREE
+  UNIQUE KEY `stk_w_tctd` (`ts_code`,`trade_date`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

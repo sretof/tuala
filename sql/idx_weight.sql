@@ -6,5 +6,6 @@ CREATE TABLE `idx_weight` (
   `con_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '成分代码',
   `weight` float DEFAULT NULL COMMENT '权重',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idwt_tdiccc` (`trade_date`,`index_code`,`con_code`) USING BTREE
+  UNIQUE KEY `idwt_tdiccc` (`trade_date`,`index_code`,`con_code`) USING BTREE,
+  KEY `idwt_tdicc_n` (`trade_date`,`index_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

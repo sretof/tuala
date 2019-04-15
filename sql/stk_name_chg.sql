@@ -8,5 +8,5 @@ CREATE TABLE `stk_namechg` (
   `ann_date` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公告日期',
   `change_reason` varchar(4000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '变更原因',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `stknchg_ts_code` (`ts_code`)
+  UNIQUE KEY `stk_nchg_ts_code` (`ts_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

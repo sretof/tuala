@@ -21,12 +21,13 @@ CREATE TABLE `idx_basic` (
   UNIQUE KEY `idb_ts_code` (`ts_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*
 --update idx_basic t set t.tts_code=substring_index(t.ts_code,'.',1);
 --ALTER TABLE `stock`.`idx_basic` 
 ADD COLUMN `tts_code` VARCHAR(20) NULL DEFAULT NULL COMMENT 'TRIM_TS代码' AFTER `fav`,
 ADD COLUMN `del` TINYINT(3) NOT NULL DEFAULT 0 AFTER `tts_code`;
 
-/*
+
 select t.tts_code  from idx_basic t group by t.tts_code having count(t.tts_code)>1;
 
 select t.* from idx_basic t where t.tts_code in (
