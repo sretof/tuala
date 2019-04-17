@@ -5,9 +5,12 @@ __author__ = 'Erik YU'
 import pymysql
 import tushare as ts
 
+import util.caldate as cd
+
 tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
 tuApi = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 tuMaxLen = 5000
+tspro = ts
 
 tumaxexcnt = 4
 
@@ -92,6 +95,17 @@ def listToDict(datas, keyn, valn):
         else:
             dict[data[keyn]] = data[valn]
     return dict
+
+
+def getsdate(stkmtdd, stkc, force=False):
+    sdate = stkmtdd.get(stkc, tuSdate)
+    if sdate > tuSdate:
+        dsdate = cd.ymd2date(sdate)
+        dsdate = cd.preday(dsdate, -1)
+        sdate = dsdate.strftime('%Y%m%d')
+    if force or sdate < tuSdate:
+        sdate = tuSdate
+    return sdate
 
 
 # to class

@@ -12,8 +12,6 @@ CREATE TABLE `stk_monthly` (
   `pct_chg` float DEFAULT NULL COMMENT '涨跌幅（%）',
   `vol` decimal(16,4) DEFAULT NULL COMMENT '成交量（手）',
   `amount` decimal(16,4) DEFAULT NULL COMMENT '成交额（千元）',
-  `turnover_rate` decimal(12,4) DEFAULT NULL COMMENT 'tor换手率',
-  `volume_ratio` decimal(12,4) DEFAULT NULL COMMENT 'vr量比',
   `ori_close` decimal(12,4) DEFAULT NULL COMMENT '收盘点位',
   `ori_open` decimal(12,4) DEFAULT NULL COMMENT '开盘点位',
   `ori_high` decimal(12,4) DEFAULT NULL COMMENT '最高点位',
