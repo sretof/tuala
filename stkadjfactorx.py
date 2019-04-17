@@ -15,7 +15,7 @@ __force = False
 __fav = 2
 __batch = True
 
-__logger = tul.TuLog('fetch_stk_basic_adj_factor_x', '/log', True).getlog()
+__logger = tul.TuLog('fetch_stk_adj_factor_x', '/log', True).getlog()
 
 
 def fetchdataone():

@@ -76,9 +76,21 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 #     rowv.append(col)
 # print(rowv)
 #
-# df = api.daily(ts_code='000001.SZ', start_date='19901219', end_date='20190414')
-# print(df['trade_date'].min())
-# print(len(df))
+df = api.daily(ts_code='600601.SH', start_date='19901219', end_date='19901219')
+print(df)
+print(df['trade_date'].min())
+print(len(df))
+
+rowvs = []
+for index, row in df.iterrows():
+    rowv = []
+    for col in df.columns:
+        rowv.append(row[col])
+    rowvs.append(rowv)
+print(rowvs)
+
+
+
 #
 # df2 = api.daily(ts_code='000001.SZ', start_date='19901219', end_date='20020303')
 # print(df2['trade_date'].min())
@@ -87,34 +99,34 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 # df4 = api.monthly(ts_code='000012.SZ', start_date='19901219', end_date='19920227')
 # print(len(df4))
 
-df3 = ts.pro_bar(api=api, adj='qfq', freq='M', ts_code='000012.SZ', start_date='19901219', end_date='20190415',factors=['tor', 'vr'])
-print(df3['trade_date'].min(),' ',df3['trade_date'].max())
+# df3 = ts.pro_bar(api=api, adj='qfq', freq='M', ts_code='000012.SZ', start_date='19901219', end_date='20190415',factors=['tor', 'vr'])
+# print(df3['trade_date'].min(),' ',df3['trade_date'].max())
 # print(df3)
 # for col in df3.columns:
 #     print(col)
 
-orilist=('close','open','high','low','pre_close','change','pct_chg')
-chgdict={}
-for orin in orilist:
-    chgdict[orin]='ori_'+orin
-print(chgdict)
-df5 = api.monthly(ts_code='000012.SZ', start_date='19920228', end_date='20190329')
-df5.rename(columns=chgdict, inplace = True)
-# print(df5)
-
-uncutlist=('trade_date',)+orilist
-print(uncutlist)
-
-cutcols=[]
-for col in df3.columns:
-    if col not in uncutlist:
-        cutcols.append(col)
-print(cutcols)
-
-data = df5.set_index('trade_date', drop=False).merge(df3.set_index('trade_date'), left_index=True, right_index=True, how='left')
-# print(data)
-
-print(data.columns.values)
+# orilist=('close','open','high','low','pre_close','change','pct_chg')
+# chgdict={}
+# for orin in orilist:
+#     chgdict[orin]='ori_'+orin
+# print(chgdict)
+# df5 = api.monthly(ts_code='000012.SZ', start_date='19920228', end_date='20190329')
+# df5.rename(columns=chgdict, inplace = True)
+# # print(df5)
+#
+# uncutlist=('trade_date',)+orilist
+# print(uncutlist)
+#
+# cutcols=[]
+# for col in df3.columns:
+#     if col not in uncutlist:
+#         cutcols.append(col)
+# print(cutcols)
+#
+# data = df5.set_index('trade_date', drop=False).merge(df3.set_index('trade_date'), left_index=True, right_index=True, how='left')
+# # print(data)
+#
+# print(data.columns.values)
 
 # print(len(df3))
 # for col in df3.columns:

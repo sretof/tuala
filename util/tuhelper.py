@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Erik YU'
 
+import numpy as np
+import pandas as pd
 import pymysql
 import tushare as ts
 
@@ -170,6 +172,39 @@ def saveorupdate(datas, batch=True):
     return emsgs
 
 
+def getstktcs(fav=2):
+    conn = getMysqlConn()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    if fav == 0 or fav == 1:
+        cursor.execute(
+            "select t.ts_code from stk_basic t where t.del<>1 and t.fav=" + str(fav) + " order by t.ts_code;")
+    else:
+        cursor.execute("select t.ts_code from stk_basic t where t.del<>1 order by t.ts_code;")
+    stktcs = cursor.fetchall()
+    cursor.close()
+    closeMysqlConn(conn)
+    return stktcs
+
+
+def cleandf(fdf):
+    if fdf is None:
+        fdf = pd.DataFrame(columns=('ts_code', 'trade_date'))
+    if len(fdf) > 0:
+        fdf = fdf.fillna(0)
+        fdf.replace(np.inf, 0, inplace=True)
+    return fdf
+
+
+def getstkmtdm(table):
+    conn = getMysqlConn()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("select t.ts_code as stktc,max(t.trade_date) as md from " + table + " t group by t.ts_code;")
+    stkmtdm = listToDict(cursor.fetchall(), 'stktc', 'md')
+    cursor.close()
+    closeMysqlConn(conn)
+    return stkmtdm
+
+
 def main():
     # cols = ('Michael', 'Bob', 'Tracy')
     # print("=====>", genInsSql(cols, 'idx_w'))
@@ -221,9 +256,15 @@ def main():
     # if stra in mySqlKey:
     #     stra = '`' + stra + '`'
     # print(stra)
-    cols = ('Michael', 'Bob', 'Tracy')
-    wcs = ('c1', 'c2')
-    print("=====>", genupdsql(cols, 'idx_w', wcs))
+    # cols = ('Michael', 'Bob', 'Tracy')
+    # wcs = ('c1', 'c2')
+    # print("=====>", genupdsql(cols, 'idx_w', wcs))
+    dates = {
+        'sql': 'insert into stk_daily(ts_code,trade_date,ori_open,ori_high,ori_low,ori_close,ori_pre_close,ori_change,ori_pct_chg,vol,amount,`open`,high,low,`close`,pre_close,`change`,pct_chg) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+        'vals': [['600601.SH', '19901219', 185.3, 185.3, 185.3, 185.3, 1.0, 184.3, 18430.0, 50.0, 37.0, 0.03, 0.03, 0.03, 0.03, 0.0, 0.03, 0.0],
+                 ['600602.SH', '19901219', 365.7, 384.0, 365.7, 384.0, 1.0, 383.0, 38300.0, 1160.0, 443.0, 0.7, 0.73, 0.7, 0.73, 0.0, 0.73, 0.0]]
+    }
+    saveorupdate(dates)
 
 
 if __name__ == '__main__':

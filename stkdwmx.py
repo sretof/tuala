@@ -5,6 +5,8 @@
 
 __author__ = 'Erik YU'
 
+import time
+
 import pandas as pd
 import pymysql
 
@@ -98,6 +100,7 @@ def fetchtudata(api, ind, sdate, edate, stkc):
                 fdf = api.weekly(ts_code=stkc, start_date=sdate, end_date=edate)
             else:
                 fdf = api.daily(ts_code=stkc, start_date=sdate, end_date=edate)
+            print(fdf)
             if fdf is not None and len(fdf) > 0:
                 fdf.rename(columns=__ocolmap, inplace=True)
                 freq = ind[0:1].upper()
@@ -125,18 +128,14 @@ def fetchtudata(api, ind, sdate, edate, stkc):
                 fdf = fdf.set_index('trade_date', drop=False).merge(qdf.set_index('trade_date'), left_index=True, right_index=True, how='left')
             break
         except BaseException as e:
-            raise e
-            # print(e)
-            # excnt += 1
-            # if excnt == tuh.tumaxexcnt:
-            #     raise e
-            # else:
-            #     time.sleep(60)
-            # continue
-    if fdf is None:
-        fdf = pd.DataFrame(columns=('ts_code', 'trade_date'))
-    if len(fdf) > 0:
-        fdf = fdf.fillna(0)
+            print(e)
+            excnt += 1
+            if excnt == tuh.tumaxexcnt:
+                raise e
+            else:
+                time.sleep(60)
+            continue
+    fdf = tuh.cleandf(fdf)
     return fdf
 
 
