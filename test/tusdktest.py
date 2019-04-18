@@ -76,19 +76,21 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 #     rowv.append(col)
 # print(rowv)
 #
-df = api.daily(ts_code='600601.SH', start_date='19901219', end_date='19901219')
+# df = api.daily(ts_code='600601.SH', start_date='19901219', end_date='19901219')
+# print(df)
+# print(df['trade_date'].min())
+# print(len(df))
+#
+# rowvs = []
+# for index, row in df.iterrows():
+#     rowv = []
+#     for col in df.columns:
+#         rowv.append(row[col])
+#     rowvs.append(rowv)
+# print(rowvs)
+
+df = api.index_weight(index_code='399707.CSI')
 print(df)
-print(df['trade_date'].min())
-print(len(df))
-
-rowvs = []
-for index, row in df.iterrows():
-    rowv = []
-    for col in df.columns:
-        rowv.append(row[col])
-    rowvs.append(rowv)
-print(rowvs)
-
 
 
 #

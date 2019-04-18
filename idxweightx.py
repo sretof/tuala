@@ -43,6 +43,8 @@ def fetchData():
         idxc = idxd['ts_code']
         sdate = cd.ymd2date(getIdxSdate(idxsdd, idxc, __force))
         edate = cd.calmonthe(cd.today(), 1)
+        if (edate - sdate).days < 28:
+            continue
         while edate > sdate:
             try:
                 df = fetchTuData(tuapi, sdate.strftime('%Y%m%d'), edate.strftime('%Y%m%d'), idxc)

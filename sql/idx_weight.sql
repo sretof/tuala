@@ -7,5 +7,6 @@ CREATE TABLE `idx_weight` (
   `weight` float DEFAULT NULL COMMENT '权重',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idwt_tdiccc` (`trade_date`,`index_code`,`con_code`) USING BTREE,
-  KEY `idwt_tdicc_n` (`trade_date`,`index_code`)
+  KEY `idwt_tdicc_n` (`trade_date`,`index_code`),
+  KEY `idx_wht_ic` (`index_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
