@@ -89,9 +89,12 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 #     rowvs.append(rowv)
 # print(rowvs)
 
-df = api.index_weight(index_code='399707.CSI')
-print(df)
+# df = api.index_weight(index_code='399707.CSI')
+# print(df)
 
+
+df2 = api.query(api_name='index_weight', index_code='399707.CSI')
+print(df2)
 
 #
 # df2 = api.daily(ts_code='000001.SZ', start_date='19901219', end_date='20020303')

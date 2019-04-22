@@ -123,10 +123,13 @@ def saveorupdateone(conn, cursor, sql, val):
     return emsg
 
 
-def saveorupdate(datas, batch=True):
+def saveorupdate(datas, batch=True, cursor=None):
     emsgs = []
-    conn = getMysqlConn()
-    cursor = conn.cursor()
+    nclose = False
+    if cursor is None:
+        nclose = True
+        conn = getMysqlConn()
+        cursor = conn.cursor()
     if not batch:
         if not datas['sql']:
             for data in datas:
@@ -167,8 +170,9 @@ def saveorupdate(datas, batch=True):
         pemsgs = saveorupdate({'sql': datas['sql'], 'vals': vals[eidxd['s']:eidxd['e']]}, batch=False)
         if pemsgs:
             emsgs.extend(pemsgs)
-    cursor.close()
-    closeMysqlConn(conn)
+    if nclose:
+        cursor.close()
+        closeMysqlConn(conn)
     return emsgs
 
 
@@ -186,9 +190,9 @@ def getstktcs(fav=2):
     return stktcs
 
 
-def cleandf(fdf):
+def cleandf(fdf, clos=('ts_code', 'trade_date')):
     if fdf is None:
-        fdf = pd.DataFrame(columns=('ts_code', 'trade_date'))
+        fdf = pd.DataFrame(columns=clos)
     if len(fdf) > 0:
         fdf = fdf.fillna(0)
         fdf.replace(np.inf, 0, inplace=True)
