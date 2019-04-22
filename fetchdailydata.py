@@ -16,7 +16,6 @@ FORCE = False
 FAV = 2
 BATCH = True
 
-LOGGERMAP = {}
 FORCEMAP = {}
 FAVMAP = {}
 BATCHMAP = {}
@@ -28,10 +27,7 @@ TUAPI = tuh.tuApi
 
 
 def fetchdata(table):
-    if table not in LOGGERMAP:
-        logger = tul.TuLog('fetch_' + table + '_x', '/log', True).getlog()
-        LOGGERMAP[table] = logger
-    logger = LOGGERMAP.get(table)
+    logger = tul.TuLog('fetch_' + table + '_x', '/log', True).getlog()
     force = FORCEMAP.get(table, FORCE)
     fav = FAVMAP.get(table, FAV)
     batch = BATCHMAP.get(table, BATCH)

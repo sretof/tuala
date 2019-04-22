@@ -9,7 +9,7 @@ import time
 
 class TuLog:
 
-    def __init__(self, lname, lpath='/../log', hasch=False):
+    def __init__(self, lname, lpath='/../log', sch=False):
         '''
             指定保存日志的文件路径，日志级别，以及调用文件
             将日志存入到指定的文件中
@@ -43,7 +43,7 @@ class TuLog:
 
             # 给logger添加handler
             self.logger.addHandler(fh)
-            if hasch:
+            if sch:
                 self.logger.addHandler(ch)
 
             #  添加下面一句，在记录日志之后移除句柄
@@ -58,13 +58,15 @@ class TuLog:
 
 def main():
     print(os.getcwd())
-    log1 = TuLog('log1').getlog()
+    log1 = TuLog('log1', sch=True).getlog()
+    TuLog('log1').getlog()
+    TuLog('log1').getlog()
     log1.debug('debug==log1======>')
     log1.info('info==log1======>')
 
-    log2 = TuLog('log2').getlog()
-    log2.debug('debug==log2======>')
-    log2.info('info==log2======>')
+    # log2 = TuLog('log2').getlog()
+    # log2.debug('debug==log2======>')
+    # log2.info('info==log2======>')
 
 
 if __name__ == '__main__':
