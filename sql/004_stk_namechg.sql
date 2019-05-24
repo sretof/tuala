@@ -1,4 +1,4 @@
-﻿DROP TABLE IF EXISTS `stk_namechg`;
+﻿#DROP TABLE IF EXISTS `stk_namechg`;
 CREATE TABLE `stk_namechg` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',

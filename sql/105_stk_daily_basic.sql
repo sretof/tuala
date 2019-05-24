@@ -1,10 +1,8 @@
-﻿DROP TABLE IF EXISTS `stk_income`;
-CREATE TABLE `stk_income` (
+﻿#DROP TABLE IF EXISTS `stk_daily_basic`;
+CREATE TABLE `stk_daily_basic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告日期',
-  `f_ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '实际公告日期，即发生过数据变更的最终日期',
-  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '报告期',
+  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
   `close` decimal(12,4) DEFAULT NULL COMMENT '收盘点位',
   `turnover_rate` float DEFAULT NULL COMMENT '换手率（%）',
   `turnover_rate_f` float DEFAULT NULL COMMENT '换手率（自由流通股）',

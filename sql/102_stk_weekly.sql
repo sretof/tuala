@@ -1,4 +1,4 @@
-﻿DROP TABLE IF EXISTS `stk_weekly`;
+﻿#DROP TABLE IF EXISTS `stk_weekly`;
 CREATE TABLE `stk_weekly` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
