@@ -2,11 +2,11 @@
 CREATE TABLE `stk_balancesheet` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告日期',
-  `f_ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '实际公告日期，即发生过数据变更的最终日期',
-  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '报告期',
-  `report_type` char(2) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '报告类型stk_enum.report_type',
-  `comp_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公司类型stk_enum.comp_type',
+  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公告日期',
+  `f_ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '实际公告日期，即发生过数据变更的最终日期',
+  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告期',
+  `report_type` char(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告类型stk_enum.report_type',
+  `comp_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公司类型stk_enum.comp_type',
   `total_share` float DEFAULT NULL COMMENT '期末总股本',
   `cap_rese` float DEFAULT NULL COMMENT '资本公积金',
   `undistr_porfit` float DEFAULT NULL COMMENT '未分配利润',
@@ -138,7 +138,7 @@ CREATE TABLE `stk_balancesheet` (
   `payables` float DEFAULT NULL COMMENT '应付款项',
   `hfs_assets` float DEFAULT NULL COMMENT '持有待售的资产',
   `hfs_sales` float DEFAULT NULL COMMENT '持有待售的负债',
-  `update_flag` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '更新标识',
+  `update_flag` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '更新标识',
   PRIMARY KEY (`id`),
   KEY `stk_bs_tc` (`ts_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

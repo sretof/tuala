@@ -1,5 +1,5 @@
-﻿#DROP TABLE IF EXISTS `fund_nav`;
-CREATE TABLE `fund_nav` (
+﻿#DROP TABLE IF EXISTS `fund_company`;
+CREATE TABLE `fund_company` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(300) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '基金公司名称',
   `shortname` varchar(300) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '简称',
@@ -20,5 +20,5 @@ CREATE TABLE `fund_nav` (
   `org_code` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '组织机构代码',
   `credit_code` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '统一社会信用代码',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `f_fn_name` (`name`)
+  UNIQUE KEY `f_fc_name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

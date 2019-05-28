@@ -2,11 +2,11 @@
 CREATE TABLE `stk_cashflow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告日期',
-  `f_ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '实际公告日期，即发生过数据变更的最终日期',
-  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '报告期',
-  `report_type` char(2) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '报告类型stk_enum.report_type',
-  `comp_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公司类型stk_enum.comp_type',
+  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公告日期',
+  `f_ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '实际公告日期，即发生过数据变更的最终日期',
+  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告期',
+  `report_type` char(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告类型stk_enum.report_type',
+  `comp_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公司类型stk_enum.comp_type',
   `net_profit` float DEFAULT NULL COMMENT '净利润',
   `finan_exp` float DEFAULT NULL COMMENT '财务费用',
   `c_fr_sale_sg` float DEFAULT NULL COMMENT '销售商品、提供劳务收到的现金',
@@ -91,7 +91,7 @@ CREATE TABLE `stk_cashflow` (
   `end_bal_cash_equ` float DEFAULT NULL COMMENT '加:现金等价物的期末余额',
   `beg_bal_cash_equ` float DEFAULT NULL COMMENT '减:现金等价物的期初余额',
   `im_n_incr_cash_equ` float DEFAULT NULL COMMENT '现金及现金等价物净增加额(间接法)',
-  `update_flag` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '更新标识',
+  `update_flag` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '更新标识',
   PRIMARY KEY (`id`),
   KEY `stk_cf_tc` (`ts_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
