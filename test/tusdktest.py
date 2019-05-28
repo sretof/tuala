@@ -6,6 +6,14 @@ import tushare as ts
 
 api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 
+# 测试接口
+df = api.query(api_name='daily', ts_code='000002.SZ')
+cols = df.columns
+rowv = []
+for col in cols:
+    rowv.append(col)
+print(rowv)
+
 # daily
 # df = api.daily(ts_code='600028.SH', start_date='20190401', end_date='20190402')
 # print(df)
@@ -93,8 +101,8 @@ api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 # print(df)
 
 
-df2 = api.query(api_name='index_weight', index_code='399707.CSI')
-print(df2)
+# df2 = api.query(api_name='index_weight', index_code='399707.CSI')
+# print(df2)
 
 #
 # df2 = api.daily(ts_code='000001.SZ', start_date='19901219', end_date='20020303')

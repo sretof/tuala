@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Erik YU'
 
+import os
+
 import numpy as np
 import pandas as pd
 import pymysql
 import tushare as ts
 
+import cache.datas as cdatas
+import conf.db as dbc
+import conf.tables as tbsc
 import util.caldate as cd
 
 tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
@@ -24,7 +29,7 @@ mySqlKey = ['open', 'close', 'change', 'new']
 
 
 def getMysqlConn():
-    conn = pymysql.connect("localhost", "root", "879211Qa!", "stock")
+    conn = pymysql.connect(dbc.DBHOST, dbc.DBUNAME, dbc.DBPWD, dbc.DBSCHEMA)
     return conn
 
 
@@ -33,6 +38,40 @@ def closeMysqlConn(conn):
         conn.close()
     except:
         pass
+
+
+# 检查table是否存在,不存在新建
+def cctable(conn, tab):
+    csql = "SELECT count(*) FROM information_schema.tables WHERE table_name = '%s' and table_schema='%s'" % (tab, dbc.DBSCHEMA)
+    cursor = conn.cursor()
+    cursor.execute(csql)
+    cnt = cursor.fetchone()[0]
+    print(cnt)
+    if cnt < 1:
+        if not cdatas.CSQLMAP:
+            initcsql()
+        if tab in cdatas.CSQLMAP:
+            cursor.execute(cdatas.CSQLMAP[tab])
+    cursor.close()
+
+
+# 初始化CSQLMAP
+def initcsql():
+    flist = os.listdir(dbc.CSQLDIR)
+    for i in range(0, len(flist)):
+        cuts = flist[i].index('_')
+        if cuts > 0:
+            tabn = flist[i][(cuts + 1):]
+        cute = tabn.index('.')
+        if cute > 0:
+            tabn = tabn[0:cute]
+        path = os.path.join(dbc.CSQLDIR, flist[i])
+        if os.path.isfile(path):
+            with open(path, 'r', encoding='UTF-8') as f:
+                csql = f.read().encode('utf-8').decode('utf-8-sig')
+                csql = csql.replace('CHARACTER SET utf8 COLLATE utf8_general_ci', '')
+                csql = csql.replace('DEFAULT CHARSET=utf8', '')
+                cdatas.CSQLMAP[tabn] = csql
 
 
 # 传入clo和tab,生成sql
@@ -263,12 +302,17 @@ def main():
     # cols = ('Michael', 'Bob', 'Tracy')
     # wcs = ('c1', 'c2')
     # print("=====>", genupdsql(cols, 'idx_w', wcs))
-    dates = {
-        'sql': 'insert into stk_daily(ts_code,trade_date,ori_open,ori_high,ori_low,ori_close,ori_pre_close,ori_change,ori_pct_chg,vol,amount,`open`,high,low,`close`,pre_close,`change`,pct_chg) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
-        'vals': [['600601.SH', '19901219', 185.3, 185.3, 185.3, 185.3, 1.0, 184.3, 18430.0, 50.0, 37.0, 0.03, 0.03, 0.03, 0.03, 0.0, 0.03, 0.0],
-                 ['600602.SH', '19901219', 365.7, 384.0, 365.7, 384.0, 1.0, 383.0, 38300.0, 1160.0, 443.0, 0.7, 0.73, 0.7, 0.73, 0.0, 0.73, 0.0]]
-    }
-    saveorupdate(dates)
+    # dates = {
+    #     'sql': 'insert into stk_daily(ts_code,trade_date,ori_open,ori_high,ori_low,ori_close,ori_pre_close,ori_change,ori_pct_chg,vol,amount,`open`,high,low,`close`,pre_close,`change`,pct_chg) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)',
+    #     'vals': [['600601.SH', '19901219', 185.3, 185.3, 185.3, 185.3, 1.0, 184.3, 18430.0, 50.0, 37.0, 0.03, 0.03, 0.03, 0.03, 0.0, 0.03, 0.0],
+    #              ['600602.SH', '19901219', 365.7, 384.0, 365.7, 384.0, 1.0, 383.0, 38300.0, 1160.0, 443.0, 0.7, 0.73, 0.7, 0.73, 0.0, 0.73, 0.0]]
+    # }
+    # saveorupdate(dates)
+    conn = getMysqlConn()
+    for tab in tbsc.STKDAILYTABLES:
+        cctable(conn, tab)
+    conn.close()
+    # initcsql()
 
 
 if __name__ == '__main__':
