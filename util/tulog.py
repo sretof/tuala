@@ -33,7 +33,7 @@ class TuLog:
 
             # 定义handler的输出格式
             formatter = logging.Formatter(
-                '[%(asctime)s]\tFile \"%(filename)s\",line %(lineno)s\t%(levelname)s: %(message)s')
+                '[%(asctime)s]\tFile \"%(filename)s\" %(thread)d:,line %(lineno)s\t%(levelname)s: %(message)s')
             fh.setFormatter(formatter)
 
             # 再创建一个handler，用于输出到控制台

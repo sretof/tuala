@@ -8,5 +8,5 @@ CREATE TABLE `stk_suspend` (
   `suspend_reason` varchar(4000) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '停牌原因',
   `reason_type` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '原因类型',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `stk_spd_ts_code` (`ts_code`)
+  KEY `stk_spd_ts_code` (`ts_code`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

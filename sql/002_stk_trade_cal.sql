@@ -6,5 +6,5 @@ CREATE TABLE `stk_trade_cal` (
   `open` tinyint(3) unsigned NOT NULL DEFAULT '1' COMMENT '是否交易 0休市 1交易',
   `pretrade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '上一个交易日',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `stktc_cal_date` (`cal_date`),
+  UNIQUE KEY `stktc_cal_date` (`cal_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

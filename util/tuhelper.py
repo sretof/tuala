@@ -3,6 +3,7 @@
 __author__ = 'Erik YU'
 
 import os
+import time
 
 import numpy as np
 import pandas as pd
@@ -15,17 +16,25 @@ import conf.tables as tbsc
 import util.caldate as cd
 
 tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
-tuApi = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
-tuMaxLen = 5000
+GTSAPI = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
+tuMaxLen = 10000
 tspro = ts
 
-tumaxexcnt = 4
+tumaxexcnt = 1
 
 tuSdate = '19901219'
 
 tuSqlMaxL = 2000
 
 mySqlKey = ['open', 'close', 'change', 'new']
+
+# stk sp method
+OCOLS = ('close', 'open', 'high', 'low', 'pre_close', 'change', 'pct_chg')
+STKSPOCOLMAP = {}
+for ocol in OCOLS:
+    STKSPOCOLMAP[ocol] = 'ori_' + ocol
+PRICE_COLS = ['open', 'close', 'high', 'low', 'pre_close']
+FORMAT = lambda x: '%.2f' % x
 
 
 def getMysqlConn():
@@ -46,7 +55,6 @@ def cctable(conn, tab):
     cursor = conn.cursor()
     cursor.execute(csql)
     cnt = cursor.fetchone()[0]
-    print(cnt)
     if cnt < 1:
         if not cdatas.CSQLMAP:
             initcsql()
@@ -56,7 +64,7 @@ def cctable(conn, tab):
 
 
 # 初始化CSQLMAP
-def initcsql():
+def initcsql(delete=False):
     flist = os.listdir(dbc.CSQLDIR)
     for i in range(0, len(flist)):
         cuts = flist[i].index('_')
@@ -71,6 +79,8 @@ def initcsql():
                 csql = f.read().encode('utf-8').decode('utf-8-sig')
                 csql = csql.replace('CHARACTER SET utf8 COLLATE utf8_general_ci', '')
                 csql = csql.replace('DEFAULT CHARSET=utf8', '')
+                if delete:
+                    csql = csql.replace('#', '', 1)
                 cdatas.CSQLMAP[tabn] = csql
 
 
@@ -109,47 +119,97 @@ def genupdsql(cols, tab, wherec, usql=''):
     return usql
 
 
-def cutTuData(df, cutidx, maxLen=tuMaxLen):
-    # print('maxL======>', maxLen)
-    # while len(df) > 0 and len(df) >= maxLen and len(df.groupby([cutidx])) > 1:
-    #     print('=====>', df[cutidx].min())
-    #     df = df[df[cutidx] > df[cutidx].min()]
-    # return df
-    gc = df.groupby([cutidx]).size().sort_index(ascending=False)
-    tcnt = 0
-    tcidx = ''
-    for gci in gc.index:
-        tcnt += gc[gci]
-        if tcnt >= maxLen:
-            tcidx = gci
+# 取api数据
+def gettudf(apin, tc, fields, sdate='', edate='', spm=False):
+    excnt = 0
+    fdf = None
+    while excnt < tumaxexcnt:
+        try:
+            if sdate:
+                fdf = GTSAPI.query(api_name=apin, ts_code=tc, start_date=sdate, end_date=edate, fields=fields)
+            else:
+                fdf = GTSAPI.query(api_name=apin, ts_code=tc, fields=fields)
+            if spm and fdf is not None and len(fdf) > 0:
+                fdf = getsptudf(apin, tc, fdf)
             break
-    if tcidx:
-        df = df[df[cutidx] >= tcidx]
-    return df
+        except BaseException as e:
+            excnt += 1
+            if excnt == tumaxexcnt:
+                raise e
+            else:
+                time.sleep(60)
+            continue
+    fdf = cleandf(fdf)
+    return fdf
 
 
-def listToDict(datas, keyn, valn):
-    dict = {}
-    for data in datas:
-        if valn == '_all_':
-            dict[data[keyn]] = data
-        else:
-            dict[data[keyn]] = data[valn]
-    return dict
+# 处理spm api数据
+def getsptudf(apin, tc, fdf):
+    if apin == 'daily' or apin == 'weekly' or apin == 'monthly':
+        fdf.rename(columns=STKSPOCOLMAP, inplace=True)
+        freq = apin[0:1].upper()
+        qdf = tspro.pro_bar(api=GTSAPI, adj='hfq', freq=freq, ts_code=tc, start_date=fdf['trade_date'].min(), end_date=fdf['trade_date'].max())
+        qdfcl = cdatas.SPMDROPCOLS[apin[0:1]]
+        if not qdfcl:
+            fcols = fdf.columns.values
+            qcols = qdf.columns.values
+            for qcol in qcols:
+                if qcol in fcols and qcol != 'trade_date':
+                    qdfcl.append(qcol)
+        qdf = qdf.drop(qdfcl, axis=1)
+        pdate = cd.preday().strftime('%Y%m%d')
+        fcts = GTSAPI.adj_factor(ts_code=tc, start_date=pdate, end_date=pdate)
+        if fcts is None or len(fcts) < 1:
+            fcts = GTSAPI.adj_factor(ts_code=tc)
+        for col in PRICE_COLS:
+            qdf[col] = qdf[col] / float(fcts['adj_factor'][0])
+            qdf[col] = qdf[col].map(FORMAT)
+            qdf[col] = qdf[col].astype(float)
+        qdf['change'] = qdf['close'] - qdf['pre_close']
+        qdf['pct_chg'] = qdf['change'] / qdf['pre_close'] * 100
+        fdf = fdf.set_index('trade_date', drop=False).merge(qdf.set_index('trade_date'), left_index=True, right_index=True, how='left')
+    return fdf
 
 
-def getsdate(stkmtdd, stkc, force=False):
-    sdate = stkmtdd.get(stkc, tuSdate)
-    if sdate > tuSdate:
-        dsdate = cd.ymd2date(sdate)
-        dsdate = cd.preday(dsdate, -1)
-        sdate = dsdate.strftime('%Y%m%d')
-    if force or sdate < tuSdate:
-        sdate = tuSdate
-    return sdate
+# save df
+def savedf(tabn, df):
+    emsgs = []
+    if len(df) < 0:
+        return emsgs
+    cols = df.columns
+    isql = geninssql(cols, tabn)
+    rowvs = []
+    for index, row in df.iterrows():
+        rowv = []
+        for col in cols:
+            rowv.append(row[col])
+        rowvs.append(rowv)
+    emsgs = saveorupdate({'sql': isql, 'vals': rowvs}, True)
+    return emsgs
 
 
-# to class
+# 清理数据emptydf,na,inf
+def cleandf(fdf, clos=('ts_code', 'trade_date')):
+    if fdf is None:
+        fdf = pd.DataFrame(columns=clos)
+    if len(fdf) > 0:
+        fdf = fdf.fillna(0)
+        fdf.replace(np.inf, 0, inplace=True)
+    return fdf
+
+
+# 取最大日期
+def getmaxdate(tab, dfield):
+    conn = getMysqlConn()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("select t.ts_code as tc,max(t.%s) as md from %s t group by t.ts_code;" % (dfield, tab))
+    dmap = listToDict(cursor.fetchall(), 'tc', 'md')
+    cursor.close()
+    closeMysqlConn(conn)
+    return dmap
+
+
+# 保存datas
 def saveorupdateone(conn, cursor, sql, val):
     emsg = {}
     try:
@@ -162,6 +222,7 @@ def saveorupdateone(conn, cursor, sql, val):
     return emsg
 
 
+# 保存datas
 def saveorupdate(datas, batch=True, cursor=None):
     emsgs = []
     nclose = False
@@ -215,6 +276,51 @@ def saveorupdate(datas, batch=True, cursor=None):
     return emsgs
 
 
+#######################################################################################
+def cutTuData(df, cutidx, maxLen=tuMaxLen):
+    # print('maxL======>', maxLen)
+    # while len(df) > 0 and len(df) >= maxLen and len(df.groupby([cutidx])) > 1:
+    #     print('=====>', df[cutidx].min())
+    #     df = df[df[cutidx] > df[cutidx].min()]
+    # return df
+    gc = df.groupby([cutidx]).size().sort_index(ascending=False)
+    tcnt = 0
+    tcidx = ''
+    for gci in gc.index:
+        tcnt += gc[gci]
+        if tcnt >= maxLen:
+            tcidx = gci
+            break
+    if tcidx:
+        df = df[df[cutidx] >= tcidx]
+    return df
+
+
+def listToDict(datas, keyn, valn):
+    dict = {}
+    for data in datas:
+        if valn == '_all_':
+            dict[data[keyn]] = data
+        else:
+            dict[data[keyn]] = data[valn]
+    return dict
+
+
+def getsdate(dmap, stkc, defsdate=tuSdate, force=False):
+    if not dmap:
+        sdate = defsdate
+    else:
+        sdate = dmap.get(stkc, defsdate)
+    if sdate > defsdate:
+        dsdate = cd.ymd2date(sdate)
+        dsdate = cd.preday(dsdate, -1)
+        sdate = dsdate.strftime('%Y%m%d')
+    if force or sdate < defsdate:
+        sdate = defsdate
+    return sdate
+
+
+# 取所有stk.ts_code
 def getstktcs(fav=2):
     conn = getMysqlConn()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -222,22 +328,14 @@ def getstktcs(fav=2):
         cursor.execute(
             "select t.ts_code from stk_basic t where t.del<>1 and t.fav=" + str(fav) + " order by t.ts_code;")
     else:
-        cursor.execute("select t.ts_code from stk_basic t where t.del<>1 order by t.ts_code;")
+        cursor.execute("select t.ts_code from stk_basic t where t.del<>1 order by fav desc,t.ts_code;")
     stktcs = cursor.fetchall()
     cursor.close()
     closeMysqlConn(conn)
     return stktcs
 
 
-def cleandf(fdf, clos=('ts_code', 'trade_date')):
-    if fdf is None:
-        fdf = pd.DataFrame(columns=clos)
-    if len(fdf) > 0:
-        fdf = fdf.fillna(0)
-        fdf.replace(np.inf, 0, inplace=True)
-    return fdf
-
-
+# 废弃
 def getstkmtdm(table):
     conn = getMysqlConn()
     cursor = conn.cursor(pymysql.cursors.DictCursor)

@@ -3,11 +3,16 @@
 __author__ = 'Erik YU'
 
 STKDAILYTABLES = {
-    'stk_daily': {'sdate': '19901219', 'api': 'daily', 'fields': '', 'params': '', 'spmethod': '', 'enable': True},
-    'stk_weekly': {'sdate': '19901219', 'api': 'weekly', 'fields': '', 'params': '', 'spmethod': '', 'enable': True},
-    'stk_monthly': {'sdate': '19901219', 'api': 'monthly', 'fields': '', 'params': '', 'spmethod': '', 'enable': True},
-    'stk_daily_basic': {'sdate': '19901219', 'api': 'adj_factor', 'fields': '', 'params': '', 'spmethod': '', 'enable': True},
-    'stk_suspend': {'sdate': '19901219', 'api': 'suspend', 'fields': '', 'params': '', 'spmethod': '', 'enable': True},
-    'stk_adj_factor': {'sdate': '19901219', 'api': 'daily_basic', 'fields': '', 'params': '', 'spmethod': '', 'enable': True},
-    'stk_moneyflow': {'sdate': '19901219', 'api': 'moneyflow', 'fields': '', 'params': '', 'spmethod': '', 'enable': False}
+    'stk_daily': {'sdate': '19901219', 'tuapi': 'daily', 'params': '', 'spm': True, 'dfield': 'trade_date', 'enable': True, 'loop': True, 'fields': ''},
+    'stk_weekly': {'sdate': '19901219', 'tuapi': 'weekly', 'params': '', 'spm': True, 'dfield': 'trade_date', 'enable': True, 'loop': True, 'fields': ''},
+    'stk_monthly': {'sdate': '19901219', 'tuapi': 'monthly', 'params': '', 'spm': True, 'dfield': 'trade_date', 'enable': True, 'loop': True,
+                    'fields': ''},
+    'stk_daily_basic': {'sdate': '19901219', 'tuapi': 'daily_basic', 'params': '', 'spm': False, 'dfield': 'trade_date', 'enable': True,
+                        'loop': True, 'fields': ''},
+    'stk_suspend': {'sdate': '19901219', 'tuapi': 'suspend', 'fields': '', 'params': '', 'spm': False, 'dfield': 'suspend_date', 'enable': True,
+                    'loop': False, 'fields': 'ts_code,suspend_date,resume_date,ann_date,suspend_reason,reason_type'},
+    'stk_adj_factor': {'sdate': '19901219', 'tuapi': 'adj_factor', 'params': '', 'spm': False, 'dfield': 'trade_date', 'enable': True,
+                       'loop': True, 'fields': ''},
+    'stk_moneyflow': {'sdate': '19901219', 'tuapi': 'moneyflow', 'params': '', 'spm': False, 'dfield': 'trade_date', 'enable': False,
+                      'loop': True, 'fields': ''}
 }

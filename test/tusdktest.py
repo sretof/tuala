@@ -7,12 +7,16 @@ import tushare as ts
 api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 
 # 测试接口
-df = api.query(api_name='daily', ts_code='000002.SZ')
+df = api.query(api_name='daily_basic', ts_code='000002.SZ', fields='')
 cols = df.columns
 rowv = []
 for col in cols:
     rowv.append(col)
 print(rowv)
+print(len(df))
+#print(df['suspend_date'].min())
+
+
 
 # daily
 # df = api.daily(ts_code='600028.SH', start_date='20190401', end_date='20190402')
