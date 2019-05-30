@@ -321,7 +321,7 @@ def getsdate(dmap, stkc, defsdate=tuSdate, force=False):
 
 
 # 取所有stk.ts_code
-def getstktcs(fav=2):
+def getallstktc(fav=2):
     conn = getMysqlConn()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     if fav == 0 or fav == 1:

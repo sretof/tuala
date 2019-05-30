@@ -1,9 +1,9 @@
 ﻿#DROP TABLE IF EXISTS `stk_fina_indicator`;
 CREATE TABLE `stk_fina_indicator` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公告日期',
-  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告期',
+  `ts_code` varchar(9) NOT NULL COMMENT 'TS代码',
+  `ann_date` char(8) DEFAULT NULL COMMENT '公告日期',
+  `end_date` char(8) DEFAULT NULL COMMENT '报告期',
   `eps` float DEFAULT NULL COMMENT '基本每股收益',
   `dt_eps` float DEFAULT NULL COMMENT '稀释每股收益',
   `total_revenue_ps` float DEFAULT NULL COMMENT '每股营业总收入',
@@ -167,8 +167,8 @@ CREATE TABLE `stk_fina_indicator` (
   `q_netprofit_qoq` float DEFAULT NULL COMMENT '归属母公司股东的净利润环比增长率(%)(单季度)',
   `equity_yoy` float DEFAULT NULL COMMENT '净资产同比增长率',
   `rd_exp` float DEFAULT NULL COMMENT '研发费用',
-  `update_flag` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '更新标识',
+  `update_flag` varchar(10) DEFAULT NULL COMMENT '更新标识',
   PRIMARY KEY (`id`),
   KEY `stk_fir_tc` (`ts_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 

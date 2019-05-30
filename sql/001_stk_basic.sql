@@ -19,4 +19,5 @@ CREATE TABLE `stk_basic` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `stkb_ts_code` (`ts_code`),
   UNIQUE KEY `stkb_symbol` (`symbol`)
-) ENGINE=InnoDB DEFAULT;
+) ENGINE=InnoDB;
+#股票列表

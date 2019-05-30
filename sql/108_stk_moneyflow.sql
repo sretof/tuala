@@ -1,8 +1,8 @@
 ﻿#DROP TABLE IF EXISTS `stk_moneyflow`;
 CREATE TABLE `stk_moneyflow` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
+  `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',
+  `trade_date` char(8) NOT NULL COMMENT '交易日期',
   `buy_sm_vol` int(10) DEFAULT NULL COMMENT '小单买入量（手）',
   `buy_sm_amount` decimal(20,4) DEFAULT NULL COMMENT '小单买入金额（万元）',
   `sell_sm_vol` int(10) DEFAULT NULL COMMENT '小单卖出量（手）',
@@ -23,4 +23,4 @@ CREATE TABLE `stk_moneyflow` (
   `net_mf_amount` decimal(20,4) DEFAULT NULL COMMENT '净流入额（万元）',
   PRIMARY KEY (`id`),
   UNIQUE KEY `stk_mf_tctd` (`ts_code`,`trade_date`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;

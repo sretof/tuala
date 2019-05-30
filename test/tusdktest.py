@@ -7,14 +7,28 @@ import tushare as ts
 api = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 
 # 测试接口
-df = api.query(api_name='daily_basic', ts_code='000002.SZ', fields='')
+# df = api.query(api_name='daily_basic', ts_code='000002.SZ', fields='')
+# cols = df.columns
+# rowv = []
+# for col in cols:
+#     rowv.append(col)
+# print(rowv)
+# print(len(df))
+#print(df['suspend_date'].min())
+
+#df = api.stock_basic(list_status='D',fields='ts_code,symbol,name,area,industry,fullname,enname,market,exchange,list_status,delist_date,list_date,is_hs')
+ps = {'list_status':'D'}
+df = api.stock_basic(fields='ts_code,symbol,name,area,industry,fullname,enname,market,exchange,list_status,delist_date,list_date,is_hs',**ps)
+print('len====>',len(df))
+# print(df)
+c = df.groupby(['list_status']).size()
+for idx in c.index:
+    print('===>C:', idx, ' ', c[idx])
 cols = df.columns
 rowv = []
 for col in cols:
     rowv.append(col)
 print(rowv)
-print(len(df))
-#print(df['suspend_date'].min())
 
 
 
@@ -76,17 +90,7 @@ print(len(df))
 #     print(rowv)
 
 
-# df = api.stock_basic(list_status='D',fields='ts_code,symbol,name,area,industry,fullname,enname,market,exchange,list_status,delist_date,list_date,is_hs')
-# print('len====>',len(df))
-# print(df)
-# c = df.groupby(['list_status']).size()
-# for idx in c.index:
-#     print('===>C:', idx, ' ', c[idx])
-# cols = df.columns
-# rowv = []
-# for col in cols:
-#     rowv.append(col)
-# print(rowv)
+
 #
 # df = api.daily(ts_code='600601.SH', start_date='19901219', end_date='19901219')
 # print(df)

@@ -1,8 +1,8 @@
 ﻿#DROP TABLE IF EXISTS `stk_daily_basic`;
 CREATE TABLE `stk_daily_basic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
+  `ts_code` varchar(9) NOT NULL COMMENT 'TS代码',
+  `trade_date` char(8) NOT NULL COMMENT '交易日期',
   `close` decimal(12,4) DEFAULT NULL COMMENT '收盘点位',
   `turnover_rate` float DEFAULT NULL COMMENT '换手率（%）',
   `turnover_rate_f` float DEFAULT NULL COMMENT '换手率（自由流通股）',
@@ -19,5 +19,5 @@ CREATE TABLE `stk_daily_basic` (
   `circ_mv` float DEFAULT NULL COMMENT '流通市值（万元）',
   PRIMARY KEY (`id`),
   UNIQUE KEY `stk_db_tctd` (`ts_code`,`trade_date`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 

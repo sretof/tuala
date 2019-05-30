@@ -1,12 +1,12 @@
 ﻿#DROP TABLE IF EXISTS `stk_income`;
 CREATE TABLE `stk_income` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公告日期',
-  `f_ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL  COMMENT '实际公告日期，即发生过数据变更的最终日期',
-  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告期',
-  `report_type` char(2) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告类型stk_enum.report_type',
-  `comp_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公司类型stk_enum.comp_type',
+  `ts_code` varchar(9) NOT NULL COMMENT 'TS代码',
+  `ann_date` char(8) DEFAULT NULL COMMENT '公告日期',
+  `f_ann_date` char(8) DEFAULT NULL  COMMENT '实际公告日期，即发生过数据变更的最终日期',
+  `end_date` char(8) DEFAULT NULL COMMENT '报告期',
+  `report_type` char(2) DEFAULT NULL COMMENT '报告类型stk_enum.report_type',
+  `comp_type` char(1) DEFAULT NULL COMMENT '公司类型stk_enum.comp_type',
   `basic_eps` float DEFAULT NULL COMMENT '基本每股收益',
   `diluted_eps` float DEFAULT NULL COMMENT '稀释每股收益',
   `total_revenue` float DEFAULT NULL COMMENT '营业总收入',
@@ -66,8 +66,8 @@ CREATE TABLE `stk_income` (
   `insurance_exp` float DEFAULT NULL COMMENT '保险业务支出',
   `undist_profit` float DEFAULT NULL COMMENT '年初未分配利润',
   `distable_profit` float DEFAULT NULL COMMENT '可分配利润',
-  `update_flag` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '更新标识',
+  `update_flag` varchar(10) DEFAULT NULL COMMENT '更新标识',
   PRIMARY KEY (`id`),
   KEY `stk_inc_tc` (`ts_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 

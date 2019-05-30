@@ -1,9 +1,9 @@
 ﻿#DROP TABLE IF EXISTS `stk_express`;
 CREATE TABLE `stk_express` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(9) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `ann_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '公告日期',
-  `end_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '报告期',
+  `ts_code` varchar(9) NOT NULL COMMENT 'TS代码',
+  `ann_date` char(8) DEFAULT NULL COMMENT '公告日期',
+  `end_date` char(8) DEFAULT NULL COMMENT '报告期',
   `revenue` float DEFAULT NULL COMMENT '净利润',
   `operate_profit` float DEFAULT NULL COMMENT '财务费用',
   `total_profit` float DEFAULT NULL COMMENT '销售商品、提供劳务收到的现金',
@@ -30,11 +30,11 @@ CREATE TABLE `stk_express` (
   `eps_last_year` float DEFAULT NULL COMMENT '支付手续费的现金',
   `open_net_assets` float DEFAULT NULL COMMENT '支付保单红利的现金',
   `open_bps` float DEFAULT NULL COMMENT '支付其他与经营活动有关的现金',
-  `pref_summary` varchar(0) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '业绩简要说明',
+  `pref_summary` varchar(0) DEFAULT NULL COMMENT '业绩简要说明',
   `audit` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '是否审计： 1是 0否',
-  `remark` varchar(0) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '备注',
-  `pdf_path` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT 'pdf文件路径',
+  `remark` varchar(0) DEFAULT NULL COMMENT '备注',
+  `pdf_path` varchar(500) DEFAULT NULL COMMENT 'pdf文件路径',
   PRIMARY KEY (`id`),
   KEY `stk_eps_tc` (`ts_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
 
