@@ -120,17 +120,16 @@ def genupdsql(cols, tab, wherec, usql=''):
 
 
 # 取api数据
-def gettudf(apin, tc, fields, sdate='', edate='', spm=False):
+def gettudf(apin, fields, kwargs, spm=False):
     excnt = 0
     fdf = None
+    if not kwargs:
+        kwargs = {}
     while excnt < tumaxexcnt:
         try:
-            if sdate:
-                fdf = GTSAPI.query(api_name=apin, ts_code=tc, start_date=sdate, end_date=edate, fields=fields)
-            else:
-                fdf = GTSAPI.query(api_name=apin, ts_code=tc, fields=fields)
+            fdf = GTSAPI.query(api_name=apin, fields=fields, **kwargs)
             if spm and fdf is not None and len(fdf) > 0:
-                fdf = getsptudf(apin, tc, fdf)
+                fdf = getsptudf(apin, fdf, kwargs.get('ts_code', ''))
             break
         except BaseException as e:
             excnt += 1
@@ -144,7 +143,7 @@ def gettudf(apin, tc, fields, sdate='', edate='', spm=False):
 
 
 # 处理spm api数据
-def getsptudf(apin, tc, fdf):
+def getsptudf(apin, fdf, tc=''):
     if apin == 'daily' or apin == 'weekly' or apin == 'monthly':
         fdf.rename(columns=STKSPOCOLMAP, inplace=True)
         freq = apin[0:1].upper()
@@ -171,8 +170,24 @@ def getsptudf(apin, tc, fdf):
     return fdf
 
 
-# save df
-def savedf(tabn, df):
+# save basic df
+def savebasicdf(tabn, df, bdmap, ufields):
+    emsgs = []
+    if len(df) < 0:
+        return emsgs
+    cols = df.columns
+    isql = geninssql(cols, tabn)
+    rowvs = []
+    for index, row in df.iterrows():
+        rowv = []
+        for col in cols:
+            rowv.append(row[col])
+        rowvs.append(rowv)
+    emsgs = saveorupdate({'sql': isql, 'vals': rowvs}, True)
+    return emsgs
+
+# save dialy df
+def savedialydf(tabn, df):
     emsgs = []
     if len(df) < 0:
         return emsgs
@@ -198,15 +213,41 @@ def cleandf(fdf, clos=('ts_code', 'trade_date')):
     return fdf
 
 
-# 取最大日期
-def getmaxdate(tab, dfield):
+# 取basic数据
+def getbdmap(tabn, kfield, ufield=[]):
     conn = getMysqlConn()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("select t.ts_code as tc,max(t.%s) as md from %s t group by t.ts_code;" % (dfield, tab))
-    dmap = listToDict(cursor.fetchall(), 'tc', 'md')
+    ffields = ','.join([kfield] + ufield)
+    cursor.execute("select %s from %s order by %s;" % (ffields, tabn, kfield))
+    bdmap = listToDict(cursor.fetchall(), kfield, '_all_')
     cursor.close()
     closeMysqlConn(conn)
-    return dmap
+    return bdmap
+
+
+# 根据gfield取kfmv
+def getmaxdate(maxvmap, gfield, defv=tuSdate, force=False):
+    if not maxvmap:
+        maxd = defv
+    else:
+        maxd = maxvmap.get(gfield, defv)
+    if maxd > defv:
+        dmaxd = cd.preday(cd.ymd2date(maxd), -1)
+        maxd = dmaxd.strftime('%Y%m%d')
+    if force or maxd < defv:
+        maxd = defv
+    return maxd
+
+
+# 取tab kfield max val group by gfield
+def getkfmvmap(tabn, gfield, kfield):
+    conn = getMysqlConn()
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute("select t.%s as gf,max(t.%s) as mv from %s t group by t.%s;" % (gfield, kfield, tabn, gfield))
+    maxvmap = listToDict(cursor.fetchall(), 'gf', 'mv')
+    cursor.close()
+    closeMysqlConn(conn)
+    return maxvmap
 
 
 # 保存datas

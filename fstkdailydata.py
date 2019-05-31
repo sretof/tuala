@@ -10,44 +10,47 @@ import util.tuhelper as tuh
 import util.tulog as tul
 
 GLOGGER = tul.TuLog('fstkdailydata', '/log', True).getlog()
-SLOGGER = GLOGGER
 TABLOGMAP = {}
+TABMAXVAL = {}
 
 
-def fhdatas(tc, tabn, tabc, save=True):
+def fhdatas(tc, tabn, tabc):
     tuapi = tabc['tuapi']
     dfield = tabc['dfield']
-    SLOGGER.debug('==S==> tc:%s table:%s tuapi:%s dfield:%s' % (tc, tabn, tuapi, dfield))
+    GLOGGER.debug('==S==> table:%s tc:%s tuapi:%s dfield:%s' % (tabn, tc, tuapi, dfield))
     conn = tuh.getMysqlConn()
     cursor = conn.cursor()
     rdf = None
+    maxdate = tuh.getmaxdate(TABMAXVAL[tabn], tc)
     if tabc['loop']:
-        sdate = cd.ymd2date(tuh.getsdate(tuh.getmaxdate(tabn, dfield), tc, tabc['sdate']))
+        sdate = cd.ymd2date(maxdate)
         edate = cd.preday()
         while edate >= sdate:
-            df = tuh.gettudf(tuapi, tc, tabc['fields'], sdate.strftime('%Y%m%d'), edate.strftime('%Y%m%d'), spm=tabc['spm'])
+            kwargs = {'ts_code': tc, 'start_date': sdate.strftime('%Y%m%d'), 'end_date': edate.strftime('%Y%m%d')}
+            df = tuh.gettudf(tuapi, tabc['fields'], kwargs, spm=tabc['spm'])
             if len(df) > 0:
                 if rdf is None:
                     rdf = df
                 else:
                     rdf = rdf.append(df)
-            SLOGGER.debug('====LOOP DATAS==> sdate:%s edate:%s dflen:%s' % (sdate, edate, len(df)))
+            GLOGGER.debug('====LOOP DATAS==> sdate:%s edate:%s dflen:%s' % (sdate, edate, len(df)))
             if len(df) < 1 or pd.isnull(df[dfield].min()):
                 edate = cd.preday(sdate)
             else:
                 edate = cd.preday(cd.ymd2date(df[dfield].min()))
     else:
-        df = tuh.gettudf(tuapi, tc, tabc['fields'], spm=tabc['spm'])
+        kwargs = {'ts_code': tc}
+        df = tuh.gettudf(tuapi, tabc['fields'], kwargs, spm=tabc['spm'])
+        df = df[df[dfield] >= maxdate]
         if len(df) > 0:
             rdf = df
-        SLOGGER.debug('====DATAS==> dflen:%s' % (len(df)))
+        GLOGGER.debug('====DATAS==> dflen:%s' % (len(df)))
     if rdf is None:
         rdf = pd.DataFrame(columns=('ts_code', 'trade_date'))
-    if save:
-        emsgs = tuh.savedf(tabn, rdf)
-        for emsg in emsgs:
-            SLOGGER.error(emsg)
-    SLOGGER.debug('==E==> tc:%s table:%s tuapi:%s rdflen:%s' % (tc, tabn, tuapi, len(rdf)))
+    emsgs = tuh.savedialydf(tabn, rdf)
+    for emsg in emsgs:
+        GLOGGER.error(emsg)
+    GLOGGER.debug('==E==> table:%s tc:%s tuapi:%s rdflen:%s' % (tabn, tc, tuapi, len(rdf)))
     cursor.close()
     conn.close()
     return rdf
@@ -59,9 +62,8 @@ def main():
         for tabn in tbsc.STKDAILYTABLES:
             if not tbsc.STKDAILYTABLES[tabn]['enable']:
                 continue
-            if tabn not in TABLOGMAP:
-                TABLOGMAP[tabn] = tul.TuLog('fetch_' + tabn + '_x', '/log', True).getlog()
-            SLOGGER = TABLOGMAP[tabn]
+            if tabn not in TABMAXVAL:
+                TABMAXVAL[tabn] = tuh.getkfmvmap(tabn, 'ts_code', tbsc.STKDAILYTABLES[tabn]['dfield'])
             fhdatas(tc['ts_code'], tabn, tbsc.STKDAILYTABLES[tabn])
 
 
