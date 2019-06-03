@@ -67,10 +67,12 @@ def cctable(conn, tab):
 def initcsql(delete=False):
     flist = os.listdir(dbc.CSQLDIR)
     for i in range(0, len(flist)):
-        cuts = flist[i].index('_')
+        if flist[i].find('z') == 0:
+            continue
+        cuts = flist[i].find('_')
         if cuts > 0:
             tabn = flist[i][(cuts + 1):]
-        cute = tabn.index('.')
+        cute = tabn.find('.')
         if cute > 0:
             tabn = tabn[0:cute]
         path = os.path.join(dbc.CSQLDIR, flist[i])

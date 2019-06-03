@@ -10,13 +10,14 @@ def main():
     tuh.initcsql(True)
     conn = tuh.getMysqlConn()
     cursor = conn.cursor()
-    for tab in cdatas.CSQLMAP:
-        if tab.find('stk') > -1 and tab.find('basic') < 0:
-            sqls = cdatas.CSQLMAP[tab].split(";")
-            for sql in sqls:
-                if sql.strip():
-                    print("============>", sql)
-                    cursor.execute(sql)
+    # for tab in cdatas.CSQLMAP:
+    #     sqls = cdatas.CSQLMAP[tab].split(";")
+    #     for sql in sqls:
+    #         if sql.strip():
+    #             try:
+    #                 cursor.execute(sql)
+    #             except Exception as e:
+    #                 print(e)
     cursor.close()
     conn.close()
 

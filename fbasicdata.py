@@ -9,7 +9,7 @@ import util.tulog as tul
 GLOGGER = tul.TuLog('fbasicdata', '/log', True).getlog()
 
 
-def fhdatas(tabn, tabc, save=True):
+def fhdatas(tabn, tabc):
     tuapi = tabc['tuapi']
     params = tabc['params']
     kfield = tabc['kfield']
