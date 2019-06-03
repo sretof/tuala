@@ -1,8 +1,8 @@
 ﻿#DROP TABLE IF EXISTS `fund_daily`;
 CREATE TABLE `fund_daily` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
+  `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',
+  `trade_date` char(8) NOT NULL COMMENT '交易日期',
   `close` decimal(12,4) DEFAULT NULL COMMENT 'fqf收盘点位',
   `open` decimal(12,4) DEFAULT NULL COMMENT 'fqf开盘点位',
   `high` decimal(12,4) DEFAULT NULL COMMENT 'fqf最高点位',
@@ -15,4 +15,4 @@ CREATE TABLE `fund_daily` (
   PRIMARY KEY (`id`),
   KEY `f_fdy_tc` (`ts_code`),
   UNIQUE KEY `f_fdy_tctd` (`ts_code`,`trade_date`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;

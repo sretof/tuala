@@ -1,4 +1,4 @@
-﻿#DROP TABLE IF EXISTS `stk_basic`;
+﻿##DROP TABLE IF EXISTS `stk_basic`;
 CREATE TABLE `stk_basic` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',

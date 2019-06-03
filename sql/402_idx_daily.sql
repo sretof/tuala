@@ -1,8 +1,8 @@
-﻿DROP TABLE IF EXISTS `idx_daily`;
+﻿#DROP TABLE IF EXISTS `idx_daily`;
 CREATE TABLE `idx_daily` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
+  `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',
+  `trade_date` char(8) NOT NULL COMMENT '交易日期',
   `close` float DEFAULT NULL COMMENT '收盘点位',
   `open` float DEFAULT NULL COMMENT '开盘点位',
   `high` float DEFAULT NULL COMMENT '最高点位',
@@ -14,4 +14,4 @@ CREATE TABLE `idx_daily` (
   `amount` float DEFAULT NULL COMMENT '成交额（千元）',
   PRIMARY KEY (`id`),
   UNIQUE KEY `idd_tctd` (`ts_code`,`trade_date`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;

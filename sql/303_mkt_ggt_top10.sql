@@ -1,9 +1,9 @@
 ﻿#DROP TABLE IF EXISTS `mkt_ggt_top10`;
 CREATE TABLE `mkt_ggt_top10` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
-  `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
-  `name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL COMMENT '名称',
+  `trade_date` char(8) NOT NULL COMMENT '交易日期',
+  `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',
+  `name` varchar(50) DEFAULT NULL COMMENT '名称',
   `close` decimal(12,4) DEFAULT NULL COMMENT 'fqf收盘点位',
   `p_change` float DEFAULT NULL COMMENT '涨跌点',
   `rank` tinyint(3) unsigned NULL COMMENT '资金排名',
@@ -21,4 +21,4 @@ CREATE TABLE `mkt_ggt_top10` (
   PRIMARY KEY (`id`),
   KEY `mkt_ggt_td` (`trade_date`),
   KEY `mkt_ggt_tc` (`ts_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;

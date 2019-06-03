@@ -1,8 +1,8 @@
 ﻿#DROP TABLE IF EXISTS `mkt_margin_detail`;
 CREATE TABLE `mkt_margin_detail` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `trade_date` char(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '交易日期',
-  `ts_code` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'TS代码',
+  `trade_date` char(8) NOT NULL COMMENT '交易日期',
+  `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',
   `rzye` float DEFAULT NULL COMMENT '融资余额(元)',
   `rqye` float DEFAULT NULL COMMENT '融券余额(元)',
   `rzmre` float DEFAULT NULL COMMENT '融资买入额(元)',
@@ -14,4 +14,4 @@ CREATE TABLE `mkt_margin_detail` (
   PRIMARY KEY (`id`),
   KEY `mkt_mgnd_td` (`trade_date`),
   KEY `mkt_mgnd_tc` (`ts_code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB;
