@@ -1,5 +1,5 @@
-﻿#DROP TABLE IF EXISTS `idx_basic`;
-CREATE TABLE `idx_basic` (
+﻿#DROP TABLE IF EXISTS `sia_flw`;
+CREATE TABLE `sia_flw` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ts_code` varchar(20) NOT NULL COMMENT 'TS代码',
   `name` varchar(50) DEFAULT NULL COMMENT '简称',
@@ -17,6 +17,5 @@ CREATE TABLE `idx_basic` (
   `fav` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `tts_code` varchar(20) DEFAULT NULL COMMENT 'TRIM_TS代码',
   `del` tinyint(3) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idb_ts_code` (`ts_code`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
