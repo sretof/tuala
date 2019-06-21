@@ -17,5 +17,6 @@ CREATE TABLE `fund_div` (
   `account_date` char(8) DEFAULT NULL COMMENT '红利再投资到账日',
   `base_year` varchar(10)  DEFAULT NULL COMMENT '份额基准年度',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `f_fdv_tc_ad` (`ts_code`,`ann_date`),
   KEY `f_fdv_tc` (`ts_code`)
 ) ENGINE=InnoDB;

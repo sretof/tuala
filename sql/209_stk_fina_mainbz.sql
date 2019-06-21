@@ -12,4 +12,5 @@ CREATE TABLE `stk_fina_mainbz` (
   PRIMARY KEY (`id`),
   KEY `stk_fmz_tc` (`ts_code`)
 ) ENGINE=InnoDB;
+#主营业务构成
 

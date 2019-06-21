@@ -7,7 +7,7 @@ CREATE TABLE `fund_company` (
   `province` varchar(50) DEFAULT NULL COMMENT '省份',
   `city` varchar(50) DEFAULT NULL COMMENT '城市',
   `address` varchar(500) DEFAULT NULL COMMENT '注册地址',
-  `phone` varchar(20) DEFAULT NULL COMMENT '电话',
+  `phone` varchar(200) DEFAULT NULL COMMENT '电话',
   `office` varchar(500) DEFAULT NULL COMMENT '办公地址',
   `website` varchar(200) DEFAULT NULL COMMENT '公司网址',
   `chairman` varchar(300) DEFAULT NULL COMMENT '法人代表',

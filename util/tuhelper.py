@@ -14,19 +14,25 @@ import cache.datas as cdatas
 import conf.db as dbc
 import conf.tables as tbsc
 import util.caldate as cd
+import util.tulog as tul
 
 tuMarkets = ('MSCI', 'CSI', 'SSE', 'SZSE', 'CICC', 'SW', 'OTH')
 GTSAPI = ts.pro_api('2b9cb5279a9297a6304a83c5512cccd0a274f09f01f1909f7ec28b5c')
 tuMaxLen = 10000
 tspro = ts
 
-tumaxexcnt = 1
-
-tuSdate = '19901219'
-
 tuSqlMaxL = 2000
 
 mySqlKey = ['open', 'close', 'change', 'new']
+
+# sdate
+TUSDATE = '19901219'
+
+# TU TRY TIMEStumaxexcnt
+TUTRYTIMES = 3
+
+# cut df
+CUTMAXLEN = 5000
 
 # stk sp method
 OCOLS = ('close', 'open', 'high', 'low', 'pre_close', 'change', 'pct_chg')
@@ -35,6 +41,8 @@ for ocol in OCOLS:
     STKSPOCOLMAP[ocol] = 'ori_' + ocol
 PRICE_COLS = ['open', 'close', 'high', 'low', 'pre_close']
 FORMAT = lambda x: '%.2f' % x
+
+GLOGGER = tul.TuLog('tuhelper', '/log', True).getlog()
 
 
 def getMysqlConn():
@@ -122,25 +130,28 @@ def genupdsql(cols, tab, wherec, usql=''):
 
 
 # 取api数据
-def gettudf(apin, fields, kwargs, spm=False):
+def gettudf(apin, fields, kwargs, spm=False, cut=False, cfield='', clen=0):
     excnt = 0
     fdf = None
     if not kwargs:
         kwargs = {}
-    while excnt < tumaxexcnt:
+    while excnt < TUTRYTIMES:
         try:
             fdf = GTSAPI.query(api_name=apin, fields=fields, **kwargs)
             if spm and fdf is not None and len(fdf) > 0:
+                pass
                 fdf = getsptudf(apin, fdf, kwargs.get('ts_code', ''))
             break
         except BaseException as e:
             excnt += 1
-            if excnt == tumaxexcnt:
+            if excnt == TUTRYTIMES:
                 raise e
             else:
                 time.sleep(60)
             continue
     fdf = cleandf(fdf)
+    if cut:
+        fdf = cutDfData(fdf, cfield, clen)
     return fdf
 
 
@@ -173,20 +184,35 @@ def getsptudf(apin, fdf, tc=''):
 
 
 # save basic df
-def savebasicdf(tabn, df, bdmap, ufields):
+def savebasicdf(tabn, df, bdmap, kfields, ufields, logger=GLOGGER):
     emsgs = []
     if len(df) < 0:
         return emsgs
     cols = df.columns
     isql = geninssql(cols, tabn)
+    usql = genupdsql(cols, tabn, (kfields,))
     rowvs = []
+    urowvs = []
     for index, row in df.iterrows():
         rowv = []
+        if row[kfields] in bdmap:
+            if checkdatachg(row, bdmap[row[kfields]], ufields):
+                for col in cols:
+                    rowv.append(row[col])
+                rowv.append(row[kfields])
+                if len(rowv) > 0:
+                    urowvs.append(rowv)
+            continue
         for col in cols:
             rowv.append(row[col])
-        rowvs.append(rowv)
-    emsgs = saveorupdate({'sql': isql, 'vals': rowvs}, True)
+        if len(rowv) > 0:
+            rowvs.append(rowv)
+    logger.debug('======tabn:%s S/U DATAS==> s:%s u:%s' % (tabn, len(rowvs), len(urowvs)))
+    emsgs = saveorupdate({'sql': isql, 'vals': rowvs})
+    uemsgs = saveorupdate({'sql': usql, 'vals': urowvs})
+    emsgs = emsgs + uemsgs
     return emsgs
+
 
 # save dialy df
 def savedialydf(tabn, df):
@@ -201,8 +227,16 @@ def savedialydf(tabn, df):
         for col in cols:
             rowv.append(row[col])
         rowvs.append(rowv)
-    emsgs = saveorupdate({'sql': isql, 'vals': rowvs}, True)
+    emsgs = saveorupdate({'sql': isql, 'vals': rowvs})
     return emsgs
+
+
+# 对比df与db数据
+def checkdatachg(rowv, dbv, ufields):
+    for field in ufields:
+        if str(rowv[field]) != str(dbv[field]):
+            return True
+    return False
 
 
 # 清理数据emptydf,na,inf
@@ -228,7 +262,7 @@ def getbdmap(tabn, kfield, ufield=[]):
 
 
 # 根据gfield取kfmv
-def getmaxdate(maxvmap, gfield, defv=tuSdate, force=False):
+def getmaxdate(maxvmap, gfield, defv=TUSDATE, force=False):
     if not maxvmap:
         maxd = defv
     else:
@@ -241,15 +275,40 @@ def getmaxdate(maxvmap, gfield, defv=tuSdate, force=False):
     return maxd
 
 
-# 取tab kfield max val group by gfield
-def getkfmvmap(tabn, gfield, kfield):
+# 取tab dfield max val group by kfield
+def getkfmvmap(tabn, kfield, dfield):
     conn = getMysqlConn()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
-    cursor.execute("select t.%s as gf,max(t.%s) as mv from %s t group by t.%s;" % (gfield, kfield, tabn, gfield))
-    maxvmap = listToDict(cursor.fetchall(), 'gf', 'mv')
+    cursor.execute("select t.%s as kf,max(t.%s) as mv from %s t group by t.%s;" % (kfield, dfield, tabn, kfield))
+    maxvmap = listToDict(cursor.fetchall(), 'kf', 'mv')
     cursor.close()
     closeMysqlConn(conn)
     return maxvmap
+
+
+# 裁剪数据
+def cutDfData(df, cfield, maxLen=CUTMAXLEN):
+    # print('maxL======>', maxLen)
+    # while len(df) > 0 and len(df) >= maxLen and len(df.groupby([cutidx])) > 1:
+    #     print('=====>', df[cutidx].min())
+    #     df = df[df[cutidx] > df[cutidx].min()]
+    # return df
+    # gc = df.groupby([cfield]).size().sort_index(ascending=False)
+    # tcnt = 0
+    # cfv = ''
+    # for gcfv in gc.index:
+    #     tcnt += gc[gcfv]
+    #     if tcnt >= maxLen:
+    #         cfv = gcfv
+    #         break
+    # if cfv:
+    #     df = df[df[cfield] > cfv]
+    print('C1', len(df), df[cfield].max(), '/', df[cfield].min())
+    if len(df) >= maxLen:
+        mincfv = df[cfield].min()
+        df = df[df[cfield] > mincfv]
+    print('C2', len(df), df[cfield].max(), '/', df[cfield].min())
+    return df
 
 
 # 保存datas
@@ -303,7 +362,7 @@ def saveorupdate(datas, batch=True, cursor=None):
             cursor.executemany(datas['sql'], vals[sidx:eidx])
             conn.commit()
         except Exception as e:
-            print('batchSave Err===>', e)
+            # print('batchSave Err===>', e)
             eidxds.append({'s': sidx, 'e': eidx})
             conn.rollback()
         finally:
@@ -320,23 +379,6 @@ def saveorupdate(datas, batch=True, cursor=None):
 
 
 #######################################################################################
-def cutTuData(df, cutidx, maxLen=tuMaxLen):
-    # print('maxL======>', maxLen)
-    # while len(df) > 0 and len(df) >= maxLen and len(df.groupby([cutidx])) > 1:
-    #     print('=====>', df[cutidx].min())
-    #     df = df[df[cutidx] > df[cutidx].min()]
-    # return df
-    gc = df.groupby([cutidx]).size().sort_index(ascending=False)
-    tcnt = 0
-    tcidx = ''
-    for gci in gc.index:
-        tcnt += gc[gci]
-        if tcnt >= maxLen:
-            tcidx = gci
-            break
-    if tcidx:
-        df = df[df[cutidx] >= tcidx]
-    return df
 
 
 def listToDict(datas, keyn, valn):
@@ -349,7 +391,7 @@ def listToDict(datas, keyn, valn):
     return dict
 
 
-def getsdate(dmap, stkc, defsdate=tuSdate, force=False):
+def getsdate(dmap, stkc, defsdate=TUSDATE, force=False):
     if not dmap:
         sdate = defsdate
     else:
@@ -363,15 +405,15 @@ def getsdate(dmap, stkc, defsdate=tuSdate, force=False):
     return sdate
 
 
-# 取所有stk.ts_code
-def getallstktc(fav=2):
+# 取所有basic.kfield
+def getallbasics(tabn, kfield, fav=2):
     conn = getMysqlConn()
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     if fav == 0 or fav == 1:
         cursor.execute(
-            "select t.ts_code from stk_basic t where t.del<>1 and t.fav=" + str(fav) + " order by t.ts_code;")
+            "select t.%s from %s t where t.del<>1 and t.fav=%s order by t.%s;" % (kfield, tabn, str(fav), kfield))
     else:
-        cursor.execute("select t.ts_code from stk_basic t where t.del<>1 order by fav desc,t.ts_code;")
+        cursor.execute("select t.%s from %s t where t.del<>1 order by fav desc,t.%s;" % (kfield, tabn, kfield))
     stktcs = cursor.fetchall()
     cursor.close()
     closeMysqlConn(conn)

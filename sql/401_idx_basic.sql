@@ -12,7 +12,7 @@ CREATE TABLE `idx_basic` (
   `base_date` varchar(8) DEFAULT NULL COMMENT '基期',
   `base_point` float DEFAULT NULL COMMENT '基点',
   `list_date` varchar(8) DEFAULT NULL COMMENT '发布日期',
-  `weight_rule` varchar(10) DEFAULT NULL COMMENT '加权方式',
+  `weight_rule` varchar(50) DEFAULT NULL COMMENT '加权方式',
   `desc` varchar(200) DEFAULT NULL COMMENT '描述',
   `exp_date` varchar(8) DEFAULT NULL COMMENT '终止日期',
   `fav` tinyint(3) unsigned NOT NULL DEFAULT '0',

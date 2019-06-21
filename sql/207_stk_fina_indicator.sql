@@ -171,4 +171,5 @@ CREATE TABLE `stk_fina_indicator` (
   PRIMARY KEY (`id`),
   KEY `stk_fir_tc` (`ts_code`)
 ) ENGINE=InnoDB;
+#财务指标
 

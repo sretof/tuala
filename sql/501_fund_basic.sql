@@ -18,7 +18,7 @@ CREATE TABLE `fund_basic` (
   `p_value` float DEFAULT NULL COMMENT '面值',
   `min_amount` float DEFAULT NULL COMMENT '起点金额(万元)',
   `exp_return` float DEFAULT NULL COMMENT '预期收益率',
-  `benchmark` varchar(50) DEFAULT NULL COMMENT '业绩比较基准',
+  `benchmark` varchar(500) DEFAULT NULL COMMENT '业绩比较基准',
   `status` varchar(10) DEFAULT NULL COMMENT '存续状态D摘牌 I发行 L已上市',
   `invest_type` varchar(50) DEFAULT NULL COMMENT '投资风格',
   `type` varchar(50) DEFAULT NULL COMMENT '基金类型',
@@ -27,6 +27,7 @@ CREATE TABLE `fund_basic` (
   `redm_startdate` char(8) DEFAULT NULL COMMENT '日常赎回起始日',
   `market` varchar(10) DEFAULT NULL COMMENT 'E场内O场外',
   `del` tinyint(3) NOT NULL DEFAULT '0',
+  `fav` tinyint(3) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `f_fb_code` (`ts_code`)
 ) ENGINE=InnoDB;

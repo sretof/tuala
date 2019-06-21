@@ -10,4 +10,5 @@ CREATE TABLE `stk_disclosure_date` (
   PRIMARY KEY (`id`),
   KEY `stk_discd_tc` (`ts_code`)
 ) ENGINE=InnoDB;
+#财务披露日期
 

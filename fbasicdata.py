@@ -27,7 +27,7 @@ def fhdatas(tabn, tabc):
                 rdf = rdf.append(df)
     conn = tuh.getMysqlConn()
     cursor = conn.cursor()
-    emsgs = tuh.savebasicdf(tabn, rdf, bdmap, ufields)
+    emsgs = tuh.savebasicdf(tabn, rdf, bdmap, kfield, ufields, GLOGGER)
     for emsg in emsgs:
         GLOGGER.error(emsg)
     GLOGGER.debug('==E==> table:%s tuapi:%s rdflen:%s' % (tabn, tuapi, len(rdf)))

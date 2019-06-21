@@ -11,4 +11,4 @@ CREATE TABLE `stk_fina_audit` (
   PRIMARY KEY (`id`),
   KEY `stk_fiat_tc` (`ts_code`)
 ) ENGINE=InnoDB;
-
+#财务审核

@@ -17,4 +17,5 @@ CREATE TABLE `stk_forecast` (
   PRIMARY KEY (`id`),
   KEY `stk_foct_tc` (`ts_code`)
 ) ENGINE=InnoDB;
+#业绩预报
 

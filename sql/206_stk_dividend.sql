@@ -20,4 +20,5 @@ CREATE TABLE `stk_dividend` (
   PRIMARY KEY (`id`),
   KEY `stk_did_tc` (`ts_code`)
 ) ENGINE=InnoDB;
+#分红送股
 

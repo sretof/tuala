@@ -29,7 +29,7 @@ class TuLog:
             self.log_name = self.log_path + "/" + lname + "." + self.log_time + '.log'
 
             fh = logging.FileHandler(self.log_name, encoding='utf-8')  # 默认追加模式
-            fh.setLevel(logging.INFO)
+            fh.setLevel(logging.ERROR)
 
             # 定义handler的输出格式
             formatter = logging.Formatter(
